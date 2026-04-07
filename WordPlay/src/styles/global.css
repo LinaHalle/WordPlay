@@ -1,0 +1,10 @@
+body {
+  margin: 0;
+  font-family: Inter, system-ui, Arial;
+  background: var(--pink-bg);
+  color: var(--black);
+}
+
+* {
+  box-sizing: border-box;
+}

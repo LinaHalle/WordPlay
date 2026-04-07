@@ -1,0 +1,12 @@
+.card {
+  background: var(--yellow);
+  border-radius: var(--radius);
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  align-items: center;
+  justify-content: center;
+}
