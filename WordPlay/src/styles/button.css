@@ -8,8 +8,9 @@
   cursor: pointer;
 
   width: 50%;
+  display: block;
 }
 
-.rules-btn {
+.body-btn {
   width: 230px;
 }
