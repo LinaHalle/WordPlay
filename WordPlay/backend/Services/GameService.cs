@@ -51,6 +51,10 @@ public class GameService
             return (false, "Not found", false);
         if (state.Status != GameStatus.InRound)
             return (true, "Round not active", false);
+        if (state.Answers.ContainsKey(req.PlayerId))
+        {
+            return (true, "Answers already submitted", false);
+        }
         state.Answers[req.PlayerId] = req.Answers;
         if (state.Answers.Count == state.Players.Count)
             state.Status = GameStatus.RoundFinished;
