@@ -1,0 +1,16 @@
+.btn {
+  background: var(--green);
+  border: 2px solid black;
+  border-radius: 12px;
+  padding: 10px 20px;
+
+  font-weight: 600;
+  cursor: pointer;
+
+  width: 50%;
+  display: block;
+}
+
+.body-btn {
+  width: 230px;
+}
