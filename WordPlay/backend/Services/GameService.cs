@@ -7,8 +7,12 @@ public class GameService
 {
     private readonly ConcurrentDictionary<Guid, GameState> _games = new();
 
-    public (Guid gameId, Guid playerId) CreateGame(string hostName, List<string> categories)
+    public (Guid gameId, Guid playerId, string? error) CreateGame(string hostName, List<string> categories)
     {
+        if (string.IsNullOrWhiteSpace(hostName))
+        {
+            return (Guid.Empty, Guid.Empty, "Hostname is requiered to join");
+        }
         var gameId = Guid.NewGuid();
         var hostId = Guid.NewGuid();
         var state = new GameState
@@ -19,11 +23,15 @@ public class GameService
             Players = new List<Player> { new Player(hostId, hostName) }
         };
         _games[gameId] = state;
-        return (gameId, hostId);
+        return (gameId, hostId, null);
     }
 
     public (bool found, Guid? playerId, string? error) JoinGame(Guid gameId, string playerName)
     {
+        if (string.IsNullOrWhiteSpace(playerName))
+        {
+            return (true, null, "Playername is requiered to join");
+        }
         if (!_games.TryGetValue(gameId, out var state))
             return (false, null, null);
         if (state.Status != GameStatus.WaitingForPlayers)
@@ -56,6 +64,8 @@ public class GameService
             return (true, "Answers already submitted", false);
         }
         state.Answers[req.PlayerId] = req.Answers;
+        state.Answers[req.PlayerId] = req.Answers;
+        Console.WriteLine($"Answers: {state.Answers.Count}, Players: {state.Players.Count}");
         if (state.Answers.Count == state.Players.Count)
             state.Status = GameStatus.RoundFinished;
         return (true, null, state.Status == GameStatus.RoundFinished);

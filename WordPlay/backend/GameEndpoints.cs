@@ -11,7 +11,8 @@ public static class GameEndpoints
 
     app.MapPost("/games", (string hostName, List<string> categories) =>
     {
-      var (gameId, playerId) = gameService.CreateGame(hostName, categories);
+      var (gameId, playerId, error) = gameService.CreateGame(hostName, categories);
+      if (error != null) return Results.BadRequest(error);
       return Results.Created($"/games/{gameId}", new { gameId, playerId });
     });
 
