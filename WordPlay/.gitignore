@@ -1,3 +1,11 @@
+# =========================
+# Node / Frontend
+# =========================
+node_modules
+dist
+dist-ssr
+*.local
+
 # Logs
 logs
 *.log
@@ -7,18 +15,22 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# =========================
+# .NET
+# =========================
+bin/
+obj/
 
-# Editor directories and files
+# User-specific files
+*.user
+*.rsuser
+*.suo
+
+# =========================
+# Editor / OS
+# =========================
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
 *.sw?
