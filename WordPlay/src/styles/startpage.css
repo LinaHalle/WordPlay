@@ -10,7 +10,7 @@
 
 .title {
   letter-spacing: 2px;
-  font-size: 32px;
+  font-size: 40px;
 }
 
 .main-card {
@@ -19,7 +19,7 @@
 }
 
 .input {
-  width: 100%;
+  width: 60%;
   padding: 10px;
   border-radius: 10px;
   border: 2px solid black;
@@ -28,6 +28,7 @@
 
 .help-text {
   margin: 0;
+  font-size: 20px;
 }
 
 @media (min-width: 768px){

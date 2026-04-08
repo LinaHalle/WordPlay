@@ -1,11 +1,8 @@
 import Card from "../components/Card";
 import Button from "../components/Button";
 
-import "../styles/global.css";
-import "../styles/theme.css";
-import "../styles/startpage.css";
-import "../styles/card.css";
-import "../styles/button.css";
+import "../index.css";
+
 
 export default function StartPage() {
   return (
@@ -21,7 +18,7 @@ export default function StartPage() {
 
       <p className="help-text">Don't know the rules?</p>
 
-      <Button>RULES</Button>
+      <Button className="rules-btn">RULES</Button>
     </div>
   );
 }
