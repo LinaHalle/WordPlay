@@ -3,19 +3,22 @@ import Card from "../components/Card";
 import Button from "../components/Button";
 import { useState } from "react";
 
+
 import "../index.css";
 
 
 export default function StartPage() {
   const navigate = useNavigate();
   const [showRules, setShowRules] = useState(false);
+
+  const [username, setusername] = useState<string>("");
   return (
     <div className="startpage">
       <h1 className="title">BRAINFART</h1>
 
       <Card className="main-card">
-        <input className="input" placeholder="ENTER NAME" />
-        <Button onClick={() => navigate("/lobby")}>
+        <input className="input" placeholder="ENTER NAME" value={username} />
+        <Button onClick={() => navigate("/ruleSet")}>
           HOST GAME
         </Button>
         <p>Want to join a game? Paste link below</p>
@@ -36,21 +39,21 @@ export default function StartPage() {
         RULES
       </Button>
       {showRules && (
-  <div className="modal-overlay" onClick={() => setShowRules(false)}>
-    <div className="modal" onClick={(e) => e.stopPropagation()}>
-      <h2>Rules</h2>
-      <p>
-        - Regel 1 <br />
-        - Regel 2 <br />
-        - Regel 3
-      </p>
+        <div className="modal-overlay" onClick={() => setShowRules(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h2>Rules</h2>
+            <p>
+              - Regel 1 <br />
+              - Regel 2 <br />
+              - Regel 3
+            </p>
 
-      <Button onClick={() => setShowRules(false)}>CLOSE</Button>
+            <Button onClick={() => setShowRules(false)}>CLOSE</Button>
+          </div>
+        </div>
+      )}
     </div>
-  </div>
-)}
-    </div>
-    
+
   );
 }
 
