@@ -13,7 +13,7 @@ export default function StartPage() {
 
       <Card className="main-card">
         <input className="input" placeholder="ENTER NAME" />
-       <Button onClick={() => navigate("/lobby")}>
+        <Button onClick={() => navigate("/lobby")}>
           HOST GAME
         </Button>
 
@@ -33,4 +33,4 @@ StartPage.route = {
   path: '/',
   menuLabel: 'StartPage',
   index: 1
-}
+};
