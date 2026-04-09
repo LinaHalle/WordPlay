@@ -9,6 +9,8 @@ export default function LobbyPage() {
     const [gameId, setGameId] = useState<string | null>(localStorage.getItem("gameId"));
     const [playerId, setPlayerId] = useState<string | null>(localStorage.getItem("playerId"));
 
+    //kolla på detta från linas localstorage set function i startpage.
+    const Username = StartPage();
 
     //state for all players in lobby
     const [players, setPlayers] = useState<Player[]>([]);
