@@ -83,25 +83,24 @@
     ]
   },
   "packageFolders": {
-    "/home/david/.nuget/packages/": {}
+    "/Users/jolle/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/david/repos/wordplay/WordPlay/WordPlay/backend/backend.csproj",
+      "projectUniqueName": "/Users/jolle/repos2/WordPlay/WordPlay/backend/backend.csproj",
       "projectName": "backend",
-      "projectPath": "/home/david/repos/wordplay/WordPlay/WordPlay/backend/backend.csproj",
-      "packagesPath": "/home/david/.nuget/packages/",
-      "outputPath": "/home/david/repos/wordplay/WordPlay/WordPlay/backend/obj/",
+      "projectPath": "/Users/jolle/repos2/WordPlay/WordPlay/backend/backend.csproj",
+      "packagesPath": "/Users/jolle/.nuget/packages/",
+      "outputPath": "/Users/jolle/repos2/WordPlay/WordPlay/backend/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/david/.nuget/NuGet/NuGet.Config"
+        "/Users/jolle/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
       ],
       "sources": {
-        "/usr/lib/dotnet/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -150,7 +149,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.105/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/10.0.102/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

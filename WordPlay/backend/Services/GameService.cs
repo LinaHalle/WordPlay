@@ -7,7 +7,7 @@ public class GameService
 {
     private readonly ConcurrentDictionary<Guid, GameState> _games = new();
 
-    public (Guid gameId, Guid playerId) CreateGame(string hostName, List<string> categories)
+    public (Guid gameId, Guid playerId) CreateGame(string hostName)
     {
         var gameId = Guid.NewGuid();
         var hostId = Guid.NewGuid();
@@ -15,8 +15,8 @@ public class GameService
         {
             GameId = gameId,
             Status = GameStatus.WaitingForPlayers,
-            Categories = categories,
-            Players = new List<Player> { new Player(hostId, hostName) }
+            Categories = new List<string>(),
+            Players = new List<Player> { new Player(hostId, hostName, true) }
         };
         _games[gameId] = state;
         return (gameId, hostId);
@@ -29,7 +29,7 @@ public class GameService
         if (state.Status != GameStatus.WaitingForPlayers)
             return (true, null, "Game already started");
         var playerId = Guid.NewGuid();
-        state.Players.Add(new Player(playerId, playerName));
+        state.Players.Add(new Player(playerId, playerName, false));
         return (true, playerId, null);
     }
 
