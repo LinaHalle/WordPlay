@@ -15,7 +15,7 @@ public static class GameEndpoints
       return Results.Created($"/games/{gameId}", new { gameId, playerId });
     });
 
-    app.MapPost("/games/{gameId:guid}/settings", (List<string> categories) =>
+    app.MapPost("/games/{gameId:guid}/settings", (List<string> categories, int rounds) =>
     {
 
     });

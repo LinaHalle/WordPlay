@@ -22,6 +22,18 @@ public class GameService
         return (gameId, hostId);
     }
 
+    public (bool found, string? error) ChooseSettings(Guid gameId, List<string> categories, int rounds)
+    {
+        if (!_games.TryGetValue(gameId, out var state))
+            return (false, null);
+        if (state.Status != GameStatus.WaitingForPlayers)
+            return (true, "Game already started");
+        state.Categories = categories;
+        state.Rounds = rounds;
+        return (true, null);
+
+    }
+
     public (bool found, Guid? playerId, string? error) JoinGame(Guid gameId, string playerName)
     {
         if (!_games.TryGetValue(gameId, out var state))
