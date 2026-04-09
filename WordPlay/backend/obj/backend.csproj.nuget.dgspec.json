@@ -1,25 +1,26 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\halle\\testing\\WordPlay\\WordPlay\\backend\\backend.csproj": {}
+    "/home/david/repos/wordplay/WordPlay/WordPlay/backend/backend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\halle\\testing\\WordPlay\\WordPlay\\backend\\backend.csproj": {
+    "/home/david/repos/wordplay/WordPlay/WordPlay/backend/backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\halle\\testing\\WordPlay\\WordPlay\\backend\\backend.csproj",
+        "projectUniqueName": "/home/david/repos/wordplay/WordPlay/WordPlay/backend/backend.csproj",
         "projectName": "backend",
-        "projectPath": "C:\\Users\\halle\\testing\\WordPlay\\WordPlay\\backend\\backend.csproj",
-        "packagesPath": "C:\\Users\\halle\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\halle\\testing\\WordPlay\\WordPlay\\backend\\obj\\",
+        "projectPath": "/home/david/repos/wordplay/WordPlay/WordPlay/backend/backend.csproj",
+        "packagesPath": "/home/david/.nuget/packages/",
+        "outputPath": "/home/david/repos/wordplay/WordPlay/WordPlay/backend/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\halle\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/david/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
+          "/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -68,7 +69,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.105/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
