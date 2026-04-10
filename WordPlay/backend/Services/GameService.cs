@@ -22,14 +22,18 @@ public class GameService
         return (gameId, hostId);
     }
 
-    public (bool found, string? error) ChooseSettings(Guid gameId, List<string> categories, int rounds)
+    public (bool found, string? error) ChooseSettings(Guid gameId, ChooseSettingsRequest req)
     {
         if (!_games.TryGetValue(gameId, out var state))
             return (false, null);
         if (state.Status != GameStatus.WaitingForPlayers)
             return (true, "Game already started");
-        state.Categories = categories;
-        state.Rounds = rounds;
+        if (req.Categories == null || req.Categories.Count == 0)
+            return (true, "Categories are requiered.");
+        if (req.Rounds <= 0)
+            return (true, "Rounds must be at least one");
+        state.Categories = req.Categories;
+        state.Rounds = req.Rounds;
         return (true, null);
 
     }
@@ -40,6 +44,8 @@ public class GameService
             return (false, null, null);
         if (state.Status != GameStatus.WaitingForPlayers)
             return (true, null, "Game already started");
+        if (string.IsNullOrWhiteSpace(playerName))
+            return (true, null, "Playername is requiered");
         var playerId = Guid.NewGuid();
         state.Players.Add(new Player(playerId, playerName, false));
         return (true, playerId, null);
@@ -63,6 +69,8 @@ public class GameService
             return (false, "Not found", false);
         if (state.Status != GameStatus.InRound)
             return (true, "Round not active", false);
+        if (state.Answers.ContainsKey(req.PlayerId))
+            return (true, "Answers has already been submitted", false);
         state.Answers[req.PlayerId] = req.Answers;
         if (state.Answers.Count == state.Players.Count)
             state.Status = GameStatus.RoundFinished;
