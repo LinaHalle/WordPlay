@@ -7,7 +7,7 @@ public class GameService
 {
     private readonly ConcurrentDictionary<Guid, GameState> _games = new();
 
-    public (Guid gameId, Guid playerId) CreateGame(string hostName)
+    public (Guid gameId, Guid playerId, string? error) CreateGame(string hostName)
     {
         var gameId = Guid.NewGuid();
         var hostId = Guid.NewGuid();
@@ -18,8 +18,10 @@ public class GameService
             Categories = new List<string>(),
             Players = new List<Player> { new Player(hostId, hostName, true) }
         };
+        if (string.IsNullOrWhiteSpace(hostName))
+            return (gameId, hostId, "Playername is requiered");
         _games[gameId] = state;
-        return (gameId, hostId);
+        return (gameId, hostId, null);
     }
 
     public (bool found, string? error) ChooseSettings(Guid gameId, ChooseSettingsRequest req)
@@ -51,12 +53,15 @@ public class GameService
         return (true, playerId, null);
     }
 
-    public (bool found, string? letter, string? error) StartGame(Guid gameId)
+    public (bool found, string? letter, string? error) StartGame(Guid gameId, Guid? playerId)
     {
         if (!_games.TryGetValue(gameId, out var state))
             return (false, null, null);
         if (state.Players.Count < 2)
             return (true, null, "Need at least 2 players");
+        var player = state.Players.Find(p => p.PlayerId == playerId);
+        if (player == null || !player.Host)
+            return (true, null, "Only Host can start the game");
         state.Status = GameStatus.InRound;
         state.CurrentLetter = LetterGenerator.RandomLetter();
         state.Answers = new Dictionary<Guid, Dictionary<string, string>>();

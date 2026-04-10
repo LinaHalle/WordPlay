@@ -10,10 +10,11 @@ public static class GameEndpoints
     var gameService = new GameService();
 
     app.MapPost("/games", (string hostName) =>
-    {
-      var (gameId, playerId) = gameService.CreateGame(hostName);
-      return Results.Created($"/games/{gameId}", new { gameId, playerId });
-    });
+{
+  var (gameId, playerId, error) = gameService.CreateGame(hostName);
+  if (error != null) return Results.BadRequest(error);
+  return Results.Created($"/games/{gameId}", new { gameId, playerId });
+});
 
     app.MapPost("/games/{gameId:guid}/settings", (Guid gameId, ChooseSettingsRequest req) =>
     {
@@ -31,9 +32,9 @@ public static class GameEndpoints
       return Results.Ok(new { gameId, playerId });
     });
 
-    app.MapPost("/games/{gameId:guid}/start", (Guid gameId) =>
+    app.MapPost("/games/{gameId:guid}/start", (Guid gameId, Guid playerId) =>
     {
-      var (found, letter, error) = gameService.StartGame(gameId);
+      var (found, letter, error) = gameService.StartGame(gameId, playerId);
       if (!found) return Results.NotFound();
       if (error != null) return Results.BadRequest(error);
       return Results.Ok(new { letter });
