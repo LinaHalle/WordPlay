@@ -9,13 +9,32 @@ import "../index.css";
 export default function StartPage() {
   const navigate = useNavigate();
   const [showRules, setShowRules] = useState(false);
+  const [username, setUsername] = useState<string>('');
   return (
     <div className="startpage">
       <h1 className="title">BRAINFART</h1>
 
       <Card className="main-card">
-        <input className="input" placeholder="ENTER NAME" />
-       <Button onClick={() => navigate("/lobby")}>
+        <input
+          className="input"
+          placeholder="ENTER NAME"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}  
+        />
+        <Button
+          disabled={!username}
+          onClick={() => {
+            const playerId = crypto.randomUUID();
+
+            const player = {
+              username,
+              playerId,
+              isHost: true
+            };
+            localStorage.setItem("currentPlayer",JSON.stringify(player));
+            navigate("/ruleSet");
+          }}
+          >
           HOST GAME
         </Button>
         <p>Want to join a game? Paste link below</p>

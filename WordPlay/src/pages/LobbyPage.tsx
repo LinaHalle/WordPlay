@@ -1,51 +1,120 @@
+import {useEffect, useState} from "react";
+
+import "../index.css";
 import Card from "../components/Card";
 import Button from "../components/Button";
 
-import "../index.css";
+
+
 
 export default function LobbyPage() {
-  return (
-    <div className="page-center">
-  <h1 className="title" >LOBBY</h1>
+  //get saved gameId and playerId from localstorage
+const [game, setGame] = useState<null | {
+  gameId: string;
+  hostId: string;
+  rounds: number;
+  categories: string[];
+  players: { playerId: string; name: string }[];
+}>(null);
+  
+  
+useEffect(() => {
+  const gameId = localStorage.getItem("gameId");
 
-  <div className="cards-container">
-    <div className="card-section">
-      <p>Number of rounds:</p>
+  if (!gameId) return;
 
-      <Card className="long-card">
-  {[3,4,5,6,7,8,9,10].map(num => (
-    <label className="option" key={num}>
-      <span>{num}</span>
-      <input type="radio" name="rounds" />
-    </label>
-  ))}
-</Card>
-    </div>
+  fetch(`http://localhost:5095/games/${gameId}`)
+  .then(res => res.json())
+  .then(data => {
+    console.log("BACKEND DATA:", data);
+    setGame(data);
+  })
+  .catch(err => console.error(err));
+}, []);
+  
+  const playerId = localStorage.getItem("playerId");
+  const isHost = playerId === game?.hostId;
+  
 
-    <div className="card-section">
-      <p>Choose categories:</p>
+    //return lobby 
+ return (
+  <div className="startpage">
+    <h1 className="title">LOBBY</h1>
+    <div className="lobby-wrapper">
+    {!game ? (
+      <Card className="lobby-card">
+        <p>Loading game...</p>
+      </Card>
+    ) : (
+      <>
+        <Card className="lobby-card">
+          <h2>Game Info</h2>
+          
+          <div className="lobby-grid">
+            <div>
+          <p><strong>Game ID:</strong> {game.gameId}</p>
 
-      <Card className="long-card">
-  {["Animals", "Fruit", "Sports", "Name", "Country", "City", "CarBrand", "Movies"].map(cat => (
-    <label className="option" key={cat}>
-      <span>{cat}</span>
-      <input type="checkbox" />
-    </label>
-  ))}
-</Card>
+          <p>
+            <strong>Host:</strong>{" "}
+            {game.players?.find(p => p.playerId === game.hostId)?.name}
+          </p>
+          </div>
+          <div>
+          <p><strong>Rounds:</strong> {game.rounds}</p>
+
+          <h3>Categories:</h3>
+          <ul className="categories-list">
+            {game.categories.map((cat: string) => (
+              <li key={cat}>{cat}</li>
+            ))}
+          </ul>
+          </div>
+          </div>
+        </Card>
+
+        <Card className="lobby-card">
+          <p>Invite link:</p>
+          <input
+            className="input"
+            value={`${window.location.origin}/lobby/${game.gameId}`}
+            readOnly
+          />
+          <h2>Players</h2>
+
+          <ul>
+            {game.players?.map((p: any) => (
+              <li key={p.playerId}>{p.name}</li>
+            ))}
+          </ul>
+
+          <p>Waiting for players...</p>
+
+          {isHost && (
+            <Button
+              onClick={async () => {
+                const res = await fetch(
+                  `http://localhost:5095/games/${game.gameId}/start`,
+                  { method: "POST" }
+                );
+
+                const data = await res.json();
+                console.log("Game started:", data);
+              }}
+            >
+              START GAME
+            </Button>
+          )}
+        </Card>
+      </>
+    )}
     </div>
   </div>
-
-  <Button className="body-btn">Create Game</Button>
-</div>
-
-  );
-}
-
-
+);
+  };
 
 LobbyPage.route = {
   path: '/lobby',
   menuLabel: 'LobbyPage',
-  index: 2
+  index: 3
 }
+
