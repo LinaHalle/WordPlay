@@ -914,25 +914,24 @@
     ]
   },
   "packageFolders": {
-    "/home/david/.nuget/packages/": {}
+    "/Users/jolle/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/david/repos/wordplay/WordPlay/word.Tests/Brainfart.Tests/Brainfart.Tests.csproj",
+      "projectUniqueName": "/Users/jolle/repos2/WordPlay/word.Tests/Brainfart.Tests/Brainfart.Tests.csproj",
       "projectName": "Brainfart.Tests",
-      "projectPath": "/home/david/repos/wordplay/WordPlay/word.Tests/Brainfart.Tests/Brainfart.Tests.csproj",
-      "packagesPath": "/home/david/.nuget/packages/",
-      "outputPath": "/home/david/repos/wordplay/WordPlay/word.Tests/Brainfart.Tests/obj/",
+      "projectPath": "/Users/jolle/repos2/WordPlay/word.Tests/Brainfart.Tests/Brainfart.Tests.csproj",
+      "packagesPath": "/Users/jolle/.nuget/packages/",
+      "outputPath": "/Users/jolle/repos2/WordPlay/word.Tests/Brainfart.Tests/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/david/.nuget/NuGet/NuGet.Config"
+        "/Users/jolle/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
       ],
       "sources": {
-        "/usr/lib/dotnet/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -990,7 +989,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.104/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/10.0.102/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",
