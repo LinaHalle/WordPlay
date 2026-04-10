@@ -15,9 +15,12 @@ public static class GameEndpoints
       return Results.Created($"/games/{gameId}", new { gameId, playerId });
     });
 
-    app.MapPost("/games/{gameId:guid}/settings", (List<string> categories, int rounds) =>
+    app.MapPost("/games/{gameId:guid}/settings", (Guid gameId, List<string> categories, int rounds) =>
     {
-
+      var (found, error) = gameService.ChooseSettings(gameId, categories, rounds);
+      if (!found) return Results.NotFound();
+      if (error != null) return Results.BadRequest(error);
+      return Results.Ok(new { gameId, categories, rounds });
     });
 
     app.MapPost("/games/{gameId:guid}/join", (Guid gameId, string playerName) =>
