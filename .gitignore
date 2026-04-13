@@ -1,1 +1,16 @@
-word.Tests/Brainfart.Tests/bin/word.Tests/Brainfart.Tests/obj/
+# Node / Frontend
+node_modules
+dist
+dist-ssr
+*.local
+
+# .NET
+bin/
+obj/
+
+# User-specific files
+*.user
+*.rsuser
+
+# Editor / OS
+.DS_Store
