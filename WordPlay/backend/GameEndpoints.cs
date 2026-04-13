@@ -9,9 +9,13 @@ public static class GameEndpoints
   {
     var gameService = new GameService();
 
-    app.MapPost("/games", (string hostName, List<string> categories) =>
+    app.MapPost("/games", (CreateGameRequest req) =>
     {
-      var (gameId, playerId) = gameService.CreateGame(hostName, categories);
+      var (gameId, playerId) = gameService.CreateGame(
+        req.HostName,
+        req.Categories,
+        req.Rounds
+      );
       return Results.Created($"/games/{gameId}", new { gameId, playerId });
     });
 

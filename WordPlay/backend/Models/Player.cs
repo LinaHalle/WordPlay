@@ -1,3 +1,3 @@
 namespace Brainfart.Models;
 
-public record Player(Guid PlayerId, string Name);
+public record Player(Guid PlayerId, string UserName);
