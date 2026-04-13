@@ -1,16 +1,16 @@
-import type { Host } from "../InterFace/CreateGame";
+import type { CreateGameRequest } from "../InterFace/CreateGame";
 
-export async function hostGame(host: Host): Promise<{ gameId: string; playerId: string }> {
+export async function hostGame(data: CreateGameRequest): Promise<{ gameId: string; playerId: string }> {
 
     const response = await fetch("/games", {
-        method: "Post",
+        method: "POST",
         headers: { "Content-Type": "application/json"},
-        body: JSON.stringify(host)
+        body: JSON.stringify(data)
     });
-    if (!(await response).ok){
-        throw new Error(`Failed to create game: ${(await response).statusText}`)
+  
+    if (!response.ok){
+      throw new Error(`Failed to create game: ${response.statusText}`);
     }
 
-    const data: { gameId: string, playerId: string } = await response.json();
-    return data;
+  return response.json();
 }

@@ -40,18 +40,6 @@ public class GameService
 
     }
 
-    public (bool found, Guid? playerId, string? error) JoinGame(Guid gameId, string playerName)
-    {
-        if (!_games.TryGetValue(gameId, out var state))
-            return (false, null, null);
-        if (state.Status != GameStatus.WaitingForPlayers)
-            return (true, null, "Game already started");
-        if (string.IsNullOrWhiteSpace(playerName))
-            return (true, null, "Playername is requiered");
-        var playerId = Guid.NewGuid();
-        state.Players.Add(new Player(playerId, playerName, false));
-        return (true, playerId, null);
-    }
 
     public (bool found, string? letter, string? error) StartGame(Guid gameId, Guid? playerId)
     {
@@ -66,6 +54,18 @@ public class GameService
         state.CurrentLetter = LetterGenerator.RandomLetter();
         state.Answers = new Dictionary<Guid, Dictionary<string, string>>();
         return (true, state.CurrentLetter, null);
+    }
+
+
+    public (bool found, Guid? playerId, string? error) JoinGame(Guid gameId, string playerName)
+    {
+        if (!_games.TryGetValue(gameId, out var state))
+            return (false, null, null);
+        if (state.Status != GameStatus.WaitingForPlayers)
+            return (true, null, "Game already started");
+        var playerId = Guid.NewGuid();
+        state.Players.Add(new Player(playerId, playerName));
+        return (true, playerId, null);
     }
 
     public (bool found, string? error, bool roundFinished) SubmitAnswers(Guid gameId, SubmitAnswersRequest req)
