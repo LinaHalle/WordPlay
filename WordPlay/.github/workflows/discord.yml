@@ -1,0 +1,22 @@
+name: Discord PR Notify
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send embed to Discord
+        run: |
+          curl -H "Content-Type: application/json" \
+          -d '{
+            "embeds": [{
+              "title": "🚀 Ny Pull Request",
+              "description": "${{ github.event.pull_request.title }}",
+              "url": "${{ github.event.pull_request.html_url }}",
+              "color": 5814783
+            }]
+          }' \
+          ${{ secrets.DISCORD_WEBHOOK }}
