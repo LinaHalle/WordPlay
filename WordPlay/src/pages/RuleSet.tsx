@@ -14,48 +14,48 @@ export default function RuleSet() {
 
   return (
     <div className="page-center">
-  <h1 className="title" >Ruleset</h1>
+      <h1 className="title" >Ruleset</h1>
 
-  <div className="cards-container">
-    <div className="card-section">
-      <p>Number of rounds:</p>
+      <div className="cards-container">
+        <div className="card-section">
+          <p>Number of rounds:</p>
 
-      <Card className="long-card">
-  {[3,4,5,6,7,8,9,10].map(num => (
-    <label className="option" key={num}>
-      <span>{num}</span>
-      <input
-        type="radio"
-        name="rounds"
-        onChange={() => setRounds(num)}  
-      />
-    </label>
-  ))}
-</Card>
-    </div>
+          <Card className="long-card">
+            {[3, 4, 5, 6, 7, 8, 9, 10].map(num => (
+              <label className="option" key={num}>
+                <span>{num}</span>
+                <input
+                  type="radio"
+                  name="rounds"
+                  onChange={() => setRounds(num)}
+                />
+              </label>
+            ))}
+          </Card>
+        </div>
 
-    <div className="card-section">
-      <p>Choose categories:</p>
+        <div className="card-section">
+          <p>Choose categories:</p>
 
-      <Card className="long-card">
-  {["Animals", "Fruit", "Sports", "Name", "Country", "City", "CarBrand", "Movies"].map(cat => (
-    <label className="option" key={cat}>
-      <span>{cat}</span>
-      <input
-        type="checkbox"
-        onChange={(e) => {
-          if (e.target.checked) {
-            setCategories([...categories, cat]);
-          } else {
-            setCategories(categories.filter(c => c !== cat));
-          }
-        }}
-      />
-    </label>
-  ))}
-</Card>
-    </div>
-  </div>
+          <Card className="long-card">
+            {["Animals", "Fruit", "Sports", "Name", "Country", "City", "CarBrand", "Movies"].map(cat => (
+              <label className="option" key={cat}>
+                <span>{cat}</span>
+                <input
+                  type="checkbox"
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setCategories([...categories, cat]);
+                    } else {
+                      setCategories(categories.filter(c => c !== cat));
+                    }
+                  }}
+                />
+              </label>
+            ))}
+          </Card>
+        </div>
+      </div>
 
       <Button
         className="body-btn"
@@ -81,21 +81,29 @@ export default function RuleSet() {
               hostName: host.username,
               categories,
               rounds: rounds!
-             
+
             });
 
-          localStorage.setItem("gameId", result.gameId);
-          localStorage.setItem("playerId", result.playerId);
 
-          navigate("/lobby");
-        } catch (err) {
-          console.error(err);
+            localStorage.setItem("gameId", result.gameId);
+
+            navigate("/lobby");
+          } catch (error: any) {
+            throw new error("Det gick inte att komma vidare");
+
+            console.error(error);
+          }
+
+          if (host && stored) {
+            navigate("/lobby");
+            return;
+          }
         }
-      }}
+        }
       >
         Create Game
       </Button>
-</div>
+    </div >
 
   );
 }
@@ -106,4 +114,4 @@ RuleSet.route = {
   path: '/ruleSet',
   menuLabel: 'RuleSet',
   index: 2
-}
+};
