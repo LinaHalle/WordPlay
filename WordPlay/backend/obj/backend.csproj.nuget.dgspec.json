@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\halle\\testing\\WordPlay\\WordPlay\\backend\\backend.csproj": {}
+    "C:\\Users\\ebadi\\repos\\Test, integration och leverans\\WordPlay\\WordPlay\\backend\\backend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\halle\\testing\\WordPlay\\WordPlay\\backend\\backend.csproj": {
+    "C:\\Users\\ebadi\\repos\\Test, integration och leverans\\WordPlay\\WordPlay\\backend\\backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\halle\\testing\\WordPlay\\WordPlay\\backend\\backend.csproj",
+        "projectUniqueName": "C:\\Users\\ebadi\\repos\\Test, integration och leverans\\WordPlay\\WordPlay\\backend\\backend.csproj",
         "projectName": "backend",
-        "projectPath": "C:\\Users\\halle\\testing\\WordPlay\\WordPlay\\backend\\backend.csproj",
-        "packagesPath": "C:\\Users\\halle\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\halle\\testing\\WordPlay\\WordPlay\\backend\\obj\\",
+        "projectPath": "C:\\Users\\ebadi\\repos\\Test, integration och leverans\\WordPlay\\WordPlay\\backend\\backend.csproj",
+        "packagesPath": "C:\\Users\\ebadi\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ebadi\\repos\\Test, integration och leverans\\WordPlay\\WordPlay\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\halle\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\ebadi\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -68,7 +68,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
