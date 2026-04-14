@@ -11,6 +11,6 @@ test('get username', async ({ page }) => {
   await page.goto('localhost:5173');
 
 
-  await page.locator("input").fill("Peter");
+  await page.locator(".input").fill("Peter");
   await page.locator(".HostButton").click();
 });
