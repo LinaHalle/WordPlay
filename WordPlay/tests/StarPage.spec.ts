@@ -21,4 +21,13 @@ test('No username Host game', async ({ page }) => {
   
     await page.locator(".input").fill("");
     await expect(page.locator(".HostButton")).toBeDisabled();
-    });
+});
+    
+test('host game navigates to ruleSet', async ({ page }) => {
+  await page.goto('http://localhost:5173');
+
+  await page.locator(".input").fill("Peter");
+  await page.locator(".HostButton").click();
+
+  await expect(page).toHaveURL(/ruleSet/);
+});
