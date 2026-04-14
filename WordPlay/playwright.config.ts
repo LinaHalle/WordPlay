@@ -14,16 +14,10 @@ import { defineConfig} from '@playwright/test';
  */
 export default defineConfig(
   {
-    webServer: [
+    webServer: 
     {
       command: "npm run start",
       url: "http://localhost:5173",
       reuseExistingServer: !process.env.CI,
     },
-    {
-      command: "dotnet run",
-      url: "http://localhost:5000",
-      reuseExistingServer: !process.env.CI,
-    }
-  ]
 });
