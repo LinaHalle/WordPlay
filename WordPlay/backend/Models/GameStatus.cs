@@ -1,3 +1,3 @@
 namespace Brainfart.Models;
 
-public enum GameStatus { WaitingForPlayers, InRound, RoundFinished }
+public enum GameStatus { WaitingForPlayers, InRound, WaitingForAnswers, RoundFinished }

@@ -45,7 +45,7 @@ public static class GameEndpoints
       var (found, error, roundFinished) = gameService.SubmitAnswers(gameId, req);
       if (!found) return Results.NotFound();
       if (error != null) return Results.BadRequest(error);
-      return Results.Ok();
+      return Results.Ok(new { roundFinished });
     });
 
     app.MapPost("/games/{gameId:guid}/finish-round", (Guid gameId) =>
