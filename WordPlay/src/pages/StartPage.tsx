@@ -25,6 +25,7 @@ export default function StartPage() {
         className="HostButton"
           disabled={!username}
           onClick={() => {
+            // Remove or keep. CHOSE eiter front or backend playerid
             const playerId = crypto.randomUUID();
 
             const player = {

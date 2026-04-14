@@ -34,6 +34,8 @@ useEffect(() => {
   
   const playerId = localStorage.getItem("playerId");
   const isHost = playerId === game?.hostId;
+  const HostRaw = localStorage.getItem("currentPlayer");
+  const HostName = JSON.parse(HostRaw!).username;
   
 
     //return lobby 
@@ -56,7 +58,7 @@ useEffect(() => {
 
           <p>
             <strong>Host:</strong>{" "}
-            {game.players?.find(p => p.playerId === game.hostId)?.name}
+            {HostName}
           </p>
           </div>
           <div>
