@@ -4,11 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node node_modules/react-rapide dev",
+    "dev": "start /b dotnet run --project backend > nul 2>&1 & node node_modules/react-rapide dev",
+    "frontend": "node node_modules/react-rapide dev",
+    "backend": "dotnet watch run --project backend",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "node node_modules/react-rapide preview",
-    "start": "node node_modules/react-rapide dev",
+    "start": "npm run dev",
     "rr": "node node_modules/react-rapide",
     "react-rapide": "node node_modules/react-rapide"
   },
@@ -25,6 +27,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
+    "concurrently": "^9.2.1",
     "eslint": "^9.39.4",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
