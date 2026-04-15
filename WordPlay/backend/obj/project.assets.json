@@ -88,11 +88,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\halle\\testing\\WordPlay\\WordPlay\\backend\\backend.csproj",
+      "projectUniqueName": "C:\\Users\\halle\\testing\\WordPlay\\wordplay\\backend\\backend.csproj",
       "projectName": "backend",
-      "projectPath": "C:\\Users\\halle\\testing\\WordPlay\\WordPlay\\backend\\backend.csproj",
+      "projectPath": "C:\\Users\\halle\\testing\\WordPlay\\wordplay\\backend\\backend.csproj",
       "packagesPath": "C:\\Users\\halle\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\halle\\testing\\WordPlay\\WordPlay\\backend\\obj\\",
+      "outputPath": "C:\\Users\\halle\\testing\\WordPlay\\wordplay\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\halle\\AppData\\Roaming\\NuGet\\NuGet.Config"

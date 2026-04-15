@@ -27,6 +27,7 @@ export default function RuleSet() {
       <input
         type="radio"
         name="rounds"
+        checked={rounds===num}
         onChange={() => setRounds(num)}  
       />
     </label>

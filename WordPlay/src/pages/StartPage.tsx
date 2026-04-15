@@ -22,6 +22,7 @@ export default function StartPage() {
           onChange={(e) => setUsername(e.target.value)}  
         />
         <Button
+        className="HostButton"
           disabled={!username}
           onClick={() => {
             const playerId = crypto.randomUUID();
