@@ -25,6 +25,10 @@ jobs:
         working-directory: ./WordPlay
         run: npm run build
 
+      - name: Install Playwright browsers
+        working-directory: ./WordPlay
+        run: npx playwright install --with-deps
+
       - name: Test frontend
         working-directory: ./WordPlay
         run: npm test 
