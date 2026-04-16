@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install frontend deps
+        working-directory: ./WordPlay
+        run: npm install
+
+      - name: Build frontend
+        working-directory: ./WordPlay
+        run: npm run build
+
+      - name: Test frontend
+        working-directory: ./WordPlay
+        run: npm test 
+
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0
+
+      - name: Restore backend
+        working-directory: ./backend
+        run: dotnet restore
+
+      - name: Build backend
+        working-directory: ./backend
+        run: dotnet build --no-restore
+
+      - name: Test backend
+        working-directory: ./backend
+        run: dotnet test --no-build
