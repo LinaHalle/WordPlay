@@ -5,9 +5,8 @@ namespace Brainfart;
 
 public static class GameEndpoints
 {
-  public static void MapGameEndpoints(this WebApplication app)
+  public static void MapGameEndpoints(this WebApplication app, GameService gameService)
   {
-    var gameService = new GameService();
 
     app.MapPost("/games", (CreateGameRequest req) =>
     {
@@ -19,9 +18,9 @@ public static class GameEndpoints
       return Results.Created($"/games/{gameId}", new { gameId, playerId });
     });
 
-    app.MapPost("/games/{gameId:guid}/join", (Guid gameId, string playerName) =>
+    app.MapPost("/games/{gameId:guid}/join", (Guid gameId, JoinGameRequest req) =>
     {
-      var (found, playerId, error) = gameService.JoinGame(gameId, playerName);
+      var (found, playerId, error) = gameService.JoinGame(gameId, req.Name);
       if (!found) return Results.NotFound();
       if (error != null) return Results.BadRequest(error);
       return Results.Ok(new { gameId, playerId });

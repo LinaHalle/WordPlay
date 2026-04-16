@@ -88,7 +88,7 @@ export default function RuleSet() {
           localStorage.setItem("gameId", result.gameId);
           localStorage.setItem("playerId", result.playerId);
 
-          navigate("/lobby");
+          navigate(`/lobby/${result.gameId}`);
         } catch (err) {
           console.error(err);
         }
