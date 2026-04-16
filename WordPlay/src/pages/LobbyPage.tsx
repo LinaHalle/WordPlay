@@ -23,10 +23,7 @@ useEffect(() => {
 
   if (!gameId) return;
 
-  // Get url
-  const ApiUrl = import.meta.env.VITE_API_URL;
-
-  fetch('${ApiUrl}/games/${gameId}')
+  fetch('${import.meta.env.VITE_API_URL}}/games/${gameId}')
   .then(res => res.json())
   .then(data => {
     console.log("BACKEND DATA:", data);
