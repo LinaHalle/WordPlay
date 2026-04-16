@@ -10,7 +10,8 @@
     "preview": "node node_modules/react-rapide preview",
     "start": "node node_modules/react-rapide dev",
     "rr": "node node_modules/react-rapide",
-    "react-rapide": "node node_modules/react-rapide"
+    "react-rapide": "node node_modules/react-rapide",
+    "test": "playwright test"
   },
   "dependencies": {
     "react": "^18.3.1",
