@@ -1,16 +1,17 @@
 import type { CreateGameRequest } from "../InterFace/CreateGame";
 
-export async function hostGame(data: CreateGameRequest): Promise<{ gameId: string; playerId: string }> {
+const API_URL = "https://brainfart.onrender.com";
 
-    const response = await fetch("/games", {
-        method: "POST",
-        headers: { "Content-Type": "application/json"},
-        body: JSON.stringify(data)
-    });
-  
-    if (!response.ok){
-      throw new Error(`Failed to create game: ${response.statusText}`);
-    }
+export async function hostGame(data: CreateGameRequest) {
+  const response = await fetch(`${API_URL}/games`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to create game: ${response.statusText}`);
+  }
 
   return response.json();
 }
