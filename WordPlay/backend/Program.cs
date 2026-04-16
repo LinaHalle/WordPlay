@@ -33,6 +33,8 @@ if (app.Environment.IsDevelopment())
 // REMOVE or disable for Render
 // app.UseHttpsRedirection();
 
+app.MapGet("/", () => "API is running");
+
 app.MapGameEndpoints();
 
 app.Run();
