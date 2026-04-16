@@ -1,6 +1,15 @@
 using Brainfart;
+using Brainfart.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var gameService = new GameService();
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+  options.SerializerOptions.PropertyNamingPolicy =
+      System.Text.Json.JsonNamingPolicy.CamelCase;
+});
 
 //CORS (frontend access)
 builder.Services.AddCors(options =>
@@ -28,7 +37,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGameEndpoints();
+app.MapGameEndpoints(gameService);
 
 app.Run();
 

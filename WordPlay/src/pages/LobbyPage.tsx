@@ -1,89 +1,163 @@
-import {useEffect, useState} from "react";
-
+import { useEffect, useState } from "react";
 import "../index.css";
 import Card from "../components/Card";
 import Button from "../components/Button";
-
-
-
+import { useParams } from "react-router-dom";
 
 export default function LobbyPage() {
-  //get saved gameId and playerId from localstorage
-const [game, setGame] = useState<null | {
-  gameId: string;
-  hostId: string;
-  rounds: number;
-  categories: string[];
-  players: { playerId: string; name: string }[];
-}>(null);
-  
-  
-useEffect(() => {
-  const gameId = localStorage.getItem("gameId");
+  const { gameId } = useParams();
+  const [username, setUsername] = useState("");
 
-  if (!gameId) return;
+  const [game, setGame] = useState<null | {
+    gameId: string;
+    hostId: string;
+    rounds: number;
+    categories: string[];
+    players: { playerId: string; userName: string }[];
+  }>(null);
 
-  fetch(`http://localhost:5095/games/${gameId}`)
-  .then(res => res.json())
-  .then(data => {
-    console.log("BACKEND DATA:", data);
-    setGame(data);
-  })
-  .catch(err => console.error(err));
-}, []);
   
   const playerId = localStorage.getItem("playerId");
-  const isHost = playerId === game?.hostId;
-  
 
-    //return lobby 
- return (
-  <div className="startpage">
-    <h1 className="title">LOBBY</h1>
-    <div className="lobby-wrapper">
-    {!game ? (
+  const isJoined =
+    !!game &&
+    !!playerId &&
+    game?.players?.some(p => p.playerId === playerId);
+
+  const isHost = playerId === game?.hostId;
+
+  // FETCH GAME
+ useEffect(() => {
+  if (!gameId) return;
+
+  const interval = setInterval(async () => {
+    try {
+      const res = await fetch(`http://localhost:5095/games/${gameId}`);
+      const data = await res.json();
+
+      setGame(prev => {
+        // skydd mot race conditions
+        if (!prev) return data;
+        return data;
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }, 2000);
+
+  return () => clearInterval(interval);
+}, [gameId]);
+
+  // LOADING STATE
+  if (!game) {
+    return (
       <Card className="lobby-card">
         <p>Loading game...</p>
       </Card>
-    ) : (
-      <>
+    );
+  }
+
+  // JOIN STATE (om spelaren inte är med)
+  if (!isJoined) {
+    return (
+      <Card className="lobby-card">
+        <h2>Join Game</h2>
+
+        <input
+          value={username}
+          className="input"
+          placeholder="Enter name"
+          onChange={(e) => setUsername(e.target.value)}
+        />
+
+        <Button
+          disabled={!username}
+          onClick={async () => {
+            const res = await fetch(
+              `http://localhost:5095/games/${game.gameId}/join`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: username })
+              }
+            );
+
+
+            
+            const data = await res.json();
+
+          localStorage.setItem("playerId", data.playerId);
+          
+
+          // hämta uppdaterad game state direkt
+          const refreshed = await fetch(`http://localhost:5095/games/${game.gameId}`);
+          const updated = await refreshed.json();
+
+          setGame(updated);
+          setUsername("");
+          }}
+        >
+          Join Game
+        </Button>
+      </Card>
+    );
+  }
+
+  // MAIN LOBBY
+  return (
+    <div className="startpage">
+      <h1 className="title">LOBBY</h1>
+
+      <div className="lobby-wrapper">
         <Card className="lobby-card">
           <h2>Game Info</h2>
-          
+
           <div className="lobby-grid">
             <div>
-          <p><strong>Game ID:</strong> {game.gameId}</p>
+              <p>
+                <strong>Game ID:</strong> {game.gameId}
+              </p>
 
-          <p>
-            <strong>Host:</strong>{" "}
-            {game.players?.find(p => p.playerId === game.hostId)?.name}
-          </p>
-          </div>
-          <div>
-          <p><strong>Rounds:</strong> {game.rounds}</p>
+              <p>
+                <strong>Host:</strong>{" "}
+                {game.players.find(p => p.playerId === game.hostId)?.userName}
+              </p>
+            </div>
 
-          <h3>Categories:</h3>
-          <ul className="categories-list">
-            {game.categories.map((cat: string) => (
-              <li key={cat}>{cat}</li>
-            ))}
-          </ul>
-          </div>
+            <div>
+              <p>
+                <strong>Rounds:</strong> {game.rounds}
+              </p>
+
+              <h3>Categories:</h3>
+              <ul className="categories-list">
+                {game.categories.map(cat => (
+                  <li key={cat}>{cat}</li>
+                ))}
+              </ul>
+            </div>
           </div>
         </Card>
 
         <Card className="lobby-card">
           <p>Invite link:</p>
-          <input
-            className="input"
-            value={`${window.location.origin}/lobby/${game.gameId}`}
-            readOnly
-          />
+          <Button
+  onClick={() => {
+    const link = `${window.location.origin}/lobby/${game.gameId}`;
+    navigator.clipboard.writeText(link);
+  }}
+>
+  Copy invite link
+</Button>
+
           <h2>Players</h2>
 
           <ul>
-            {game.players?.map((p: any) => (
-              <li key={p.playerId}>{p.name}</li>
+            {game.players.map(p => (
+              <li key={p.playerId}>
+                {p.playerId === game.hostId ? "👑 " : ""}
+                {p.userName}
+              </li>
             ))}
           </ul>
 
@@ -105,16 +179,13 @@ useEffect(() => {
             </Button>
           )}
         </Card>
-      </>
-    )}
+      </div>
     </div>
-  </div>
-);
-  };
-
-LobbyPage.route = {
-  path: '/lobby',
-  menuLabel: 'LobbyPage',
-  index: 3
+  );
 }
 
+LobbyPage.route = {
+  path: "/lobby",
+  menuLabel: "LobbyPage",
+  index: 3
+};
