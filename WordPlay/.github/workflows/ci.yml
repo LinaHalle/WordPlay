@@ -18,15 +18,15 @@ jobs:
           node-version: 20
 
       - name: Install frontend deps
-        working-directory: ./src
+        working-directory: ./WordPlay
         run: npm install
 
       - name: Build frontend
-        working-directory: ./src
+        working-directory: ./WordPlay
         run: npm run build
 
       - name: Test frontend
-        working-directory: ./src
+        working-directory: ./WordPlay
         run: npm test -- --watchAll=false
 
 
