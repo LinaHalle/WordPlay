@@ -13,7 +13,7 @@ const router = createBrowserRouter([
     element: <StartPage />
   },
   {
-    path: '/lobby',
+    path: '/lobby/:gameId',
     element: <LobbyPage />
   },
   {

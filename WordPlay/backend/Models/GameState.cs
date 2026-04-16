@@ -12,3 +12,4 @@ public class GameState
   public Dictionary<Guid, Dictionary<string, string>> Answers { get; set; } = new();
   public Dictionary<Guid, int> Scoreboard { get; set; } = new();
 }
+
