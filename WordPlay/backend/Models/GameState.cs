@@ -10,4 +10,12 @@ public class GameState
     public Dictionary<Guid, Dictionary<string, string>> Answers { get; set; } = new();
     public Dictionary<Guid, int> Scoreboard { get; set; } = new();
     public int Rounds { get; set; } = 1;
+    public int RoundsLeft { get; set; }
+
+    public int GetRoundsLeft() => RoundsLeft;
+
+    public void DecrementRoundsLeft()
+    {
+        if (RoundsLeft > 0) RoundsLeft--;
+    }
 }

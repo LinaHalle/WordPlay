@@ -13,7 +13,8 @@ public static class GameEndpoints
     {
       var (gameId, playerId, error) = gameService.CreateGame(hostName);
       if (error != null) return Results.BadRequest(error);
-      return Results.Created($"/games/{gameId}", new { gameId, playerId });
+      var state = gameService.GetGameState(gameId).state;
+      return Results.Created($"/games/{gameId}", new { gameId, playerId, status = state?.Status.ToString() });
     });
 
     app.MapPost("/games/{gameId:guid}/settings", (Guid gameId, ChooseSettingsRequest req) =>
@@ -21,7 +22,8 @@ public static class GameEndpoints
       var (found, error) = gameService.ChooseSettings(gameId, req);
       if (!found) return Results.NotFound();
       if (error != null) return Results.BadRequest(error);
-      return Results.Ok(new { gameId, req });
+      var state = gameService.GetGameState(gameId).state;
+      return Results.Ok(new { gameId, req, status = state?.Status.ToString() });
     });
 
     app.MapPost("/games/{gameId:guid}/join", (Guid gameId, string playerName) =>
@@ -29,7 +31,8 @@ public static class GameEndpoints
       var (found, playerId, error) = gameService.JoinGame(gameId, playerName);
       if (!found) return Results.NotFound();
       if (error != null) return Results.BadRequest(error);
-      return Results.Ok(new { gameId, playerId });
+      var state = gameService.GetGameState(gameId).state;
+      return Results.Ok(new { gameId, playerId, status = state?.Status.ToString() });
     });
 
     app.MapPost("/games/{gameId:guid}/start", (Guid gameId, Guid playerId) =>
@@ -37,7 +40,8 @@ public static class GameEndpoints
       var (found, letter, error) = gameService.StartGame(gameId, playerId);
       if (!found) return Results.NotFound();
       if (error != null) return Results.BadRequest(error);
-      return Results.Ok(new { letter });
+      var state = gameService.GetGameState(gameId).state;
+      return Results.Ok(new { letter, status = state?.Status.ToString() });
     });
 
     app.MapPost("/games/{gameId:guid}/answers", (Guid gameId, SubmitAnswersRequest req) =>
@@ -45,7 +49,8 @@ public static class GameEndpoints
       var (found, error, roundFinished) = gameService.SubmitAnswers(gameId, req);
       if (!found) return Results.NotFound();
       if (error != null) return Results.BadRequest(error);
-      return Results.Ok(new { roundFinished });
+      var state = gameService.GetGameState(gameId).state;
+      return Results.Ok(new { roundFinished, status = state?.Status.ToString() });
     });
 
     app.MapPost("/games/{gameId:guid}/finish-round", (Guid gameId) =>
@@ -60,7 +65,18 @@ public static class GameEndpoints
     {
       var (found, state) = gameService.GetGameState(gameId);
       if (!found) return Results.NotFound();
-      return Results.Ok(state);
+      return Results.Ok(new
+      {
+        state!.GameId,
+        Status = state.Status.ToString(),
+        state.Players,
+        state.Categories,
+        state.CurrentLetter,
+        state.Answers,
+        state.Scoreboard,
+        state.Rounds,
+        state.RoundsLeft
+      });
     });
   }
 }

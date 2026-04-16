@@ -9,8 +9,11 @@ public class GameService
 
     public (Guid gameId, Guid playerId, string? error) CreateGame(string hostName)
     {
+        
         var gameId = Guid.NewGuid();
         var hostId = Guid.NewGuid();
+
+        // Detta testats i UNIT tester
         var state = new GameState
         {
             GameId = gameId,
@@ -21,6 +24,8 @@ public class GameService
         if (string.IsNullOrWhiteSpace(hostName))
             return (gameId, hostId, "Playername is requiered");
         _games[gameId] = state;
+        
+        // Detta testas i API testerna
         return (gameId, hostId, null);
     }
 
@@ -36,6 +41,7 @@ public class GameService
             return (true, "Rounds must be at least one");
         state.Categories = req.Categories;
         state.Rounds = req.Rounds;
+        state.RoundsLeft = req.Rounds;
         return (true, null);
 
     }
@@ -91,6 +97,11 @@ public class GameService
             return (true, null, "Round not finished yet");
         var roundResult = Scoring.Calculate(state);
         state.Scoreboard = roundResult.Scoreboard;
+        state.DecrementRoundsLeft();
+        if (state.GetRoundsLeft() > 0)
+            state.Status = GameStatus.InRound;
+        if (state.GetRoundsLeft() == 0)
+            state.Status = GameStatus.GameEnded;
         return (true, roundResult, null);
     }
 
