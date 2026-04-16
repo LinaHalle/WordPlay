@@ -9,6 +9,7 @@ import "../index.css";
 export default function StartPage() {
   const navigate = useNavigate();
   const [showRules, setShowRules] = useState(false);
+  const [username, setUsername] = useState<string>('');
   return (
     <div className="startpage">
       <h1 className="title">BRAINFART</h1>
