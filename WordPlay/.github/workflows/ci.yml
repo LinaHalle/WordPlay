@@ -27,7 +27,7 @@ jobs:
 
       - name: Test frontend
         working-directory: ./WordPlay
-        run: npm test -- --watchAll=false
+        run: npm test 
 
 
       - name: Setup .NET
