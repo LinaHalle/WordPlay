@@ -27,25 +27,43 @@ export default function LobbyPage() {
   const isHost = playerId === game?.hostId;
 
   // FETCH GAME
- useEffect(() => {
+useEffect(() => {
   if (!gameId) return;
 
-  const interval = setInterval(async () => {
+  let isActive = true;
+
+  const fetchGame = async () => {
     try {
+      console.log("FETCHING GAME:", gameId);
+
       const res = await fetch(`http://localhost:5095/games/${gameId}`);
       const data = await res.json();
 
-      setGame(prev => {
-        // skydd mot race conditions
-        if (!prev) return data;
-        return data;
+      console.log("BACKEND DATA:", {
+        gameId: data.gameId,
+        players: data.players.length,
+        hostId: data.hostId,
+        status: data.status
       });
-    } catch (err) {
-      console.error(err);
-    }
-  }, 2000);
 
-  return () => clearInterval(interval);
+      if (!isActive) return;
+
+      setGame(data);
+    } catch (err) {
+      console.error("FETCH ERROR:", err);
+    }
+  };
+
+  // direkt första fetch
+  fetchGame();
+
+  // polling
+  const interval = setInterval(fetchGame, 2000);
+
+  return () => {
+    isActive = false;
+    clearInterval(interval);
+  };
 }, [gameId]);
 
   // LOADING STATE
