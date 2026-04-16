@@ -1,6 +1,7 @@
 using Brainfart;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls("http://0.0.0.0:8080");
 
 //CORS (frontend access)
 builder.Services.AddCors(options =>
@@ -26,7 +27,8 @@ if (app.Environment.IsDevelopment())
   app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+// REMOVE or disable for Render
+// app.UseHttpsRedirection();
 
 app.MapGameEndpoints();
 
