@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import StartPage from './pages/StartPage';
 import RuleSet from './pages/RuleSet';
 import LobbyPage from './pages/LobbyPage';
+import GamePage from './pages/GamePage';
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
   {
     path: '/ruleSet',
     element: <RuleSet />
+  },
+  {
+    path: '/game/:gameId',
+    element: <GamePage/>
   }
 ]);
 

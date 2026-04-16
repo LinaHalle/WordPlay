@@ -3,10 +3,12 @@ import "../index.css";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function LobbyPage() {
   const { gameId } = useParams();
   const [username, setUsername] = useState("");
+  const navigate = useNavigate();
 
   const [game, setGame] = useState<null | {
     gameId: string;
@@ -49,6 +51,14 @@ useEffect(() => {
       if (!isActive) return;
 
       setGame(data);
+
+       if (
+        data.status === 1 &&
+        window.location.pathname !== `/game/${data.gameId}`
+      ) {
+        navigate(`/game/${data.gameId}`);
+      }
+
     } catch (err) {
       console.error("FETCH ERROR:", err);
     }
@@ -160,13 +170,13 @@ useEffect(() => {
         <Card className="lobby-card">
           <p>Invite link:</p>
           <Button
-  onClick={() => {
-    const link = `${window.location.origin}/lobby/${game.gameId}`;
-    navigator.clipboard.writeText(link);
-  }}
->
-  Copy invite link
-</Button>
+            onClick={() => {
+              const link = `${window.location.origin}/lobby/${game.gameId}`;
+              navigator.clipboard.writeText(link);
+            }}
+            >
+            Copy invite link
+          </Button>
 
           <h2>Players</h2>
 
@@ -203,7 +213,7 @@ useEffect(() => {
 }
 
 LobbyPage.route = {
-  path: "/lobby",
+  path: '/lobby/:gameId',
   menuLabel: "LobbyPage",
   index: 3
 };
