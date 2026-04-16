@@ -3,28 +3,31 @@ using Brainfart;
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://0.0.0.0:8080");
 
-//CORS (frontend access)
+// CORS (frontend access)
 builder.Services.AddCors(options =>
 {
   options.AddPolicy("AllowFrontend", policy =>
   {
     policy
-          .AllowAnyOrigin()
-          .AllowAnyHeader()
-          .AllowAnyMethod();
+      .AllowAnyOrigin()
+      .AllowAnyHeader()
+      .AllowAnyMethod();
   });
 });
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+// Swagger (OpenAPI för .NET 8)
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
 app.UseCors("AllowFrontend");
 
-// Configure the HTTP request pipeline.
+// Swagger UI (bara i dev)
 if (app.Environment.IsDevelopment())
 {
-  app.MapOpenApi();
+  app.UseSwagger();
+  app.UseSwaggerUI();
 }
 
 // REMOVE or disable for Render
@@ -33,4 +36,3 @@ if (app.Environment.IsDevelopment())
 app.MapGameEndpoints();
 
 app.Run();
-
