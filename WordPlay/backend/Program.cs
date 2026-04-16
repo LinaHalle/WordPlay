@@ -21,6 +21,10 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseDefaultFiles();
+
+app.UseStaticFiles();
+
 app.UseCors("AllowFrontend");
 
 // Swagger UI (bara i dev)
