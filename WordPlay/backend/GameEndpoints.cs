@@ -10,7 +10,7 @@ public static class GameEndpoints
     var gameService = new GameService();
 
 
-    app.MapPost("/games", (string hostName, CreateGameRequest req) =>
+    app.MapPost("/games", (string hostName) =>
     {
       var (gameId, playerId, error) = gameService.CreateGame(hostName);
       if (error != null) return Results.BadRequest(error);
