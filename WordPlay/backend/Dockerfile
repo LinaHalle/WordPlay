@@ -17,7 +17,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=backend-build /app/publish .
 
-# Vite output
 COPY --from=frontend-build /app/dist ./wwwroot
 
 EXPOSE 8080
