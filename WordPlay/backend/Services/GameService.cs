@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Text.RegularExpressions;
 using Brainfart.Models;
 
 namespace Brainfart.Services;
@@ -6,6 +7,18 @@ namespace Brainfart.Services;
 public class GameService
 {
     private readonly ConcurrentDictionary<Guid, GameState> _games = new();
+    private static readonly Regex ValidName = new(@"^[a-zA-Z0-9 ]+$");
+
+    private static string? ValidatePlayerName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "Playername is requiered";
+        if (name.Length > 20)
+            return "Name must be 20 characters or less";
+        if (!ValidName.IsMatch(name))
+            return "Name can only contain letters, numbers, and spaces";
+        return null;
+    }
 
     public (Guid gameId, Guid playerId, string? error) CreateGame(string hostName)
     {
@@ -21,8 +34,9 @@ public class GameService
             Categories = new List<string>(),
             Players = new List<Player> { new Player(hostId, hostName, true) }
         };
-        if (string.IsNullOrWhiteSpace(hostName))
-            return (gameId, hostId, "Playername is requiered");
+        var nameError = ValidatePlayerName(hostName);
+        if (nameError != null)
+            return (gameId, hostId, nameError);
         _games[gameId] = state;
         
         // Detta testas i API testerna
@@ -52,8 +66,9 @@ public class GameService
             return (false, null, null);
         if (state.Status != GameStatus.WaitingForPlayers)
             return (true, null, "Game already started");
-        if (string.IsNullOrWhiteSpace(playerName))
-            return (true, null, "Playername is requiered");
+        var nameError = ValidatePlayerName(playerName);
+        if (nameError != null)
+            return (true, null, nameError);
         var playerId = Guid.NewGuid();
         state.Players.Add(new Player(playerId, playerName, false));
         return (true, playerId, null);
@@ -67,6 +82,8 @@ public class GameService
             return (true, null, "Game is not in a startable state");
         if (state.Players.Count < 2)
             return (true, null, "Need at least 2 players");
+        if (state.Categories.Count == 0)
+            return (true, null, "Categories must be set before starting");
         var player = state.Players.Find(p => p.PlayerId == playerId);
         if (player == null || !player.Host)
             return (true, null, "Only Host can start the game");
@@ -82,8 +99,13 @@ public class GameService
             return (false, "Not found", false);
         if (state.Status != GameStatus.InRound && state.Status != GameStatus.WaitingForAnswers)
             return (true, "Round not active", false);
+        if (!state.Players.Any(p => p.PlayerId == req.PlayerId))
+            return (true, "Player not found in this game", false);
         if (state.Answers.ContainsKey(req.PlayerId))
             return (true, "Answers has already been submitted", false);
+        var extraCategories = req.Answers.Keys.Except(state.Categories).ToList();
+        if (extraCategories.Any())
+            return (true, "Answers contain invalid categories", false);
         state.Answers[req.PlayerId] = req.Answers;
         state.Status = GameStatus.WaitingForAnswers;
         if (state.Answers.Count == state.Players.Count)
