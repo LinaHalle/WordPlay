@@ -8,9 +8,9 @@ RUN npm run build
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS backend-build
 WORKDIR /app/backend
-COPY WordPlay/backend/*.csproj ./
+COPY backend/*.csproj ./
 RUN dotnet restore
-COPY WordPlay/backend/ ./
+COPY backend/ ./
 RUN dotnet publish -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
