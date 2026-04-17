@@ -37,8 +37,9 @@ if (app.Environment.IsDevelopment())
 // REMOVE or disable for Render
 // app.UseHttpsRedirection();
 
-app.MapGet("/", () => "API is running");
-
 app.MapGameEndpoints();
+
+// Makes it so freontend shwos and handles routes
+app.MapFallbackToFile("index.html");
 
 app.Run();
