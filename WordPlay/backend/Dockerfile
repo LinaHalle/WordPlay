@@ -18,8 +18,8 @@ RUN dotnet publish -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=backend-build /app/publish .
-# Kopiera de byggda frontend-filerna till wwwroot
-COPY --from=frontend-build /app/dist ./wwwroot
+COPY --from=frontend-build /app/backend/wwwroot ./wwwroot
+
 
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "WordPlay.dll"] 
