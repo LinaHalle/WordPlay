@@ -97,7 +97,42 @@ public class GameCreationTests
 
     Assert.NotNull(state); // Spelets information skall inte vara tomt
     Assert.Equal(GameStatus.WaitingForPlayers, state.Status); // Spelet ska fortfarande vara i vänteläge
-    Assert.Null(state.CurrentLetter); // Ingen bokstav ska ha sparats i state heller
-    Assert.Null(state.Answers); // Samlingen av svar har inte skapats heller
+    Assert.Equal("", state.CurrentLetter); // Ingen bokstav ska ha sparats i state heller
+    Assert.Empty(state.Answers); // Inga svar ska finnas sparade
+  }
+
+  [Fact]
+  public void SubmitAnswers_FirstPlayer_SavesAnswersButDoesNotFinishRound() // Testar att första spelarens svar sparas utan att rundan avslutas direkt
+  {
+    var service = new GameService();
+
+    var (gameId, hostId) = service.CreateGame("Alice", new List<string> { "Cities", "Animals" }, 2); // Alice skapar ett spel som host
+    var (_, joinedPlayerId, _) = service.JoinGame(gameId, "Bob"); // Bob ansluter
+
+    service.StartGame(gameId); // Spelet startar och det är dags för att svara
+
+    var request = new SubmitAnswersRequest( // Här bygger vi ihop Alice svar med en request-modell där kategori är nyckel och svaret är värdet, därav dictionary
+      hostId,
+      new Dictionary<string, string>
+      {
+        ["Cities"] = "Stockholm",
+        ["Animals"] = "Seal"
+      }
+    );
+
+    var (found, error, roundFinished) = service.SubmitAnswers(gameId, request); // Alice svar skickas in och får tillbaka found, error och om rundan är avslutad
+    var (_, state) = service.GetGameState(gameId); // Hämtar spelets nuvarande information för att se vad som sparats
+
+    Assert.True(found); // Spelet ska hittas
+    Assert.Null(error); // Inget fel uppkommer
+    Assert.False(roundFinished); // Rundan ska INTE vara avslutad eftersom Bob inte har skickat in sina svar än
+    Assert.NotNull(state); // Spelets information skall inte vara tomt
+    Assert.Equal(GameStatus.InRound, state.Status); // Spelet ska vara in en aktiv runda
+    Assert.NotNull(state.Answers); // Samlingen av svar skall existera
+    Assert.Single(state.Answers); // Det skall enbart finnas ett svar i samlingen, Alices svar
+    Assert.Equal("Stockholm", state.Answers[hostId]["Cities"]); // Hennes svar på stad
+    Assert.Equal("Seal", state.Answers[hostId]["Animals"]); // Hennes svar på djur
+    Assert.NotNull(joinedPlayerId); // Bob ska ha fått ett giltigt spelar-ID
+    Assert.False(state.Answers.ContainsKey(joinedPlayerId.Value)); // Bobs ID skall inte existera i samlingen av svar då han inte svarat än. ".Value" används för att komma åt värdet inut i Guid 
   }
 }
