@@ -22,7 +22,4 @@ COPY --from=frontend-build /app/backend/wwwroot ./wwwroot
 
 
 EXPOSE 8080
-ENTRYPOINT ["dotnet", "WordPlay.dll"] 
-
-#dynamic port
-CMD [ "sh", "-c", "ASPNETCORE_URLS=http://+:${PORT:-8080} dotnet WordPlay.dll"]
+CMD [ "dotnet","WordPlay.dll"]
