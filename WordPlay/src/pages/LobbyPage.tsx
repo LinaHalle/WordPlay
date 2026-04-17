@@ -17,16 +17,6 @@ export default function LobbyPage() {
   }>(null);
 
 
-  //could be wrong =========================================================================================
-  fetch(`${import.meta.env.VITE_API_URL}/games/${gameId}`)
-  .then(res => res.json())
-  .then(data => {
-    console.log("BACKEND DATA:", data);
-    setGame(data);
-  })
-  .catch(err => console.error(err));
-}, []);
-  
   const playerId = localStorage.getItem("playerId");
 
   const isJoined =
@@ -195,7 +185,7 @@ export default function LobbyPage() {
             <Button
               onClick={async () => {
                 const res = await fetch(
-                  `${import.meta.env.VITE_API_URL}/games/${game.gameId}/start`,
+                  `http://localhost:5095/games/${game.gameId}/start`,
                   { method: "POST" }
                 );
 
