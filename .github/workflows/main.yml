@@ -25,7 +25,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./WordPlay
-        run: npm ci
+        run: npm i
 
       - name: Build frontend
         working-directory: ./WordPlay
