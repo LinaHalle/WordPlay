@@ -1,0 +1,144 @@
+{
+	"info": {
+		"_postman_id": "changesettings-api-tests",
+		"name": "ChangeSettings API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POST /games/{{gameId}}/settings",
+			"item": [
+				{
+					"name": "Valid categories and rounds",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"categories valda ska ge 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Rounds valda ger 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Categories\": [\"Namn\", \"Land\", \"Stad\", \"Frukt\", \"Bilmodell\", \"Fotbollsspelare\"],\n    \"Rounds\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/settings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"games",
+								"{{gameId}}",
+								"settings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Empty categories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Inga categories valda ska ge 400\", function() {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Categories\": [],\n    \"Rounds\": 4\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/settings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"games",
+								"{{gameId}}",
+								"settings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Zero rounds",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Inga rounds valda ska ge 400\", function() {",
+									"    pm.response.to.have.status(400);",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Categories\": [\"Namn\", \"Land\", \"Stad\", \"Frukt\", \"Bilmodell\", \"Fotbollsspelare\"],\n    \"Rounds\": 0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/settings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"games",
+								"{{gameId}}",
+								"settings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

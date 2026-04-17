@@ -1,0 +1,136 @@
+{
+	"info": {
+		"_postman_id": "startgame-api-tests",
+		"name": "StartGame API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POST /games/{{gameId}}/start",
+			"item": [
+				{
+					"name": "Start with 2 players (host starts)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should give 200 when 2 players and host starts\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains letter\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data).to.have.property(\"letter\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/start?playerId={{playerId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"games",
+								"{{gameId}}",
+								"start"
+							],
+							"query": [
+								{
+									"key": "playerId",
+									"value": "{{playerId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Start with only 1 player",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Start game with only one player ska ge 400\", function() {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/start?playerId={{playerId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"games",
+								"{{gameId}}",
+								"start"
+							],
+							"query": [
+								{
+									"key": "playerId",
+									"value": "{{playerId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Non-host tries to start",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Only host can start the game, ska ge 400\", function() {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/start?playerId={{playerId2}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"games",
+								"{{gameId}}",
+								"start"
+							],
+							"query": [
+								{
+									"key": "playerId",
+									"value": "{{playerId2}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

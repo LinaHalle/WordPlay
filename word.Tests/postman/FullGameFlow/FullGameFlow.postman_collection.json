@@ -1,0 +1,736 @@
+{
+	"info": {
+		"_postman_id": "fullgameflow-api-tests",
+		"name": "FullGameFlow API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Full Game — 3 players, 3 rounds",
+			"item": [
+				{
+					"name": "1. Create lobby",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"if (pm.response.code === 201) {",
+									"    const data = pm.response.json();",
+									"    pm.environment.set(\"gameId\", data.gameId);",
+									"    pm.environment.set(\"playerId\", data.playerId);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games?hostName=Host1",
+							"host": ["{{base_url}}"],
+							"path": ["games"],
+							"query": [{"key": "hostName", "value": "Host1"}]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Set settings (3 rounds)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Settings accepted, status 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Categories\": [\"Namn\", \"Land\", \"Stad\", \"Frukt\", \"Bilmodell\", \"Fotbollsspelare\"],\n    \"Rounds\": 3\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/settings",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "settings"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Player 2 joins",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Player 2 joined, status 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const data = pm.response.json();",
+									"    pm.environment.set(\"playerId2\", data.playerId);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Player2\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/join",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "join"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Player 3 joins",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Player 3 joined, status 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const data = pm.response.json();",
+									"    pm.environment.set(\"playerId3\", data.playerId);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Player3\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/join",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "join"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Host starts Round 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Game started, status 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains letter\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data).to.have.property(\"letter\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/start?playerId={{playerId}}",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "start"],
+							"query": [{"key": "playerId", "value": "{{playerId}}"}]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6. R1 — Player 1 answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Player 1 answers accepted\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId}}\",\n    \"answers\": {\n        \"Namn\": \"Anna\",\n        \"Land\": \"Albanien\",\n        \"Stad\": \"Amsterdam\",\n        \"Frukt\": \"Ananas\",\n        \"Bilmodell\": \"Audi\",\n        \"Fotbollsspelare\": \"Alisson\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7. R1 — Player 2 answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Player 2 answers accepted\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId2}}\",\n    \"answers\": {\n        \"Namn\": \"Bert\",\n        \"Land\": \"Belgien\",\n        \"Stad\": \"Berlin\",\n        \"Frukt\": \"Banan\",\n        \"Bilmodell\": \"BMW\",\n        \"Fotbollsspelare\": \"Benzema\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "8. R1 — Player 3 answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Player 3 answers accepted\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Round finished after all players submitted\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.roundFinished).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId3}}\",\n    \"answers\": {\n        \"Namn\": \"Carl\",\n        \"Land\": \"Chile\",\n        \"Stad\": \"Chicago\",\n        \"Frukt\": \"Citron\",\n        \"Bilmodell\": \"Chevrolet\",\n        \"Fotbollsspelare\": \"Casillas\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9. Finish Round 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Round 1 finished, status 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/finish-round",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "finish-round"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "10. Check leaderboard after R1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"RoundsLeft is 2 after round 1\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.roundsLeft).to.equal(2);",
+									"});",
+									"",
+									"pm.test(\"Status is ShowingLeaderboard\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.status).to.equal(\"ShowingLeaderboard\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "11. Host starts Round 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Round 2 started, status 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains letter\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data).to.have.property(\"letter\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/start?playerId={{playerId}}",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "start"],
+							"query": [{"key": "playerId", "value": "{{playerId}}"}]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "12. R2 — Player 1 answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Player 1 answers accepted\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId}}\",\n    \"answers\": {\n        \"Namn\": \"David\",\n        \"Land\": \"Danmark\",\n        \"Stad\": \"Dublin\",\n        \"Frukt\": \"Dadel\",\n        \"Bilmodell\": \"Dacia\",\n        \"Fotbollsspelare\": \"Drogba\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "13. R2 — Player 2 answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Player 2 answers accepted\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId2}}\",\n    \"answers\": {\n        \"Namn\": \"Erik\",\n        \"Land\": \"Estland\",\n        \"Stad\": \"Edinburgh\",\n        \"Frukt\": \"Eldfluga\",\n        \"Bilmodell\": \"Ferrari\",\n        \"Fotbollsspelare\": \"Eriksen\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "14. R2 — Player 3 answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Player 3 answers accepted\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Round finished after all players submitted\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.roundFinished).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId3}}\",\n    \"answers\": {\n        \"Namn\": \"Filip\",\n        \"Land\": \"Finland\",\n        \"Stad\": \"Frankfurt\",\n        \"Frukt\": \"Fikon\",\n        \"Bilmodell\": \"Fiat\",\n        \"Fotbollsspelare\": \"Firmino\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "15. Finish Round 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Round 2 finished, status 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/finish-round",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "finish-round"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "16. Check leaderboard after R2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"RoundsLeft is 1 after round 2\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.roundsLeft).to.equal(1);",
+									"});",
+									"",
+									"pm.test(\"Status is ShowingLeaderboard\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.status).to.equal(\"ShowingLeaderboard\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "17. Host starts Round 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Round 3 started, status 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains letter\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data).to.have.property(\"letter\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/start?playerId={{playerId}}",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "start"],
+							"query": [{"key": "playerId", "value": "{{playerId}}"}]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "18. R3 — Player 1 answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Player 1 answers accepted\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId}}\",\n    \"answers\": {\n        \"Namn\": \"Gustav\",\n        \"Land\": \"Grekland\",\n        \"Stad\": \"Goteborg\",\n        \"Frukt\": \"Granatapple\",\n        \"Bilmodell\": \"Genesis\",\n        \"Fotbollsspelare\": \"Griezmann\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "19. R3 — Player 2 answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Player 2 answers accepted\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId2}}\",\n    \"answers\": {\n        \"Namn\": \"Henrik\",\n        \"Land\": \"Holland\",\n        \"Stad\": \"Hamburg\",\n        \"Frukt\": \"Hallon\",\n        \"Bilmodell\": \"Honda\",\n        \"Fotbollsspelare\": \"Hazard\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "20. R3 — Player 3 answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Player 3 answers accepted\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Round finished after all players submitted\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.roundFinished).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId3}}\",\n    \"answers\": {\n        \"Namn\": \"Ida\",\n        \"Land\": \"Irland\",\n        \"Stad\": \"Istanbul\",\n        \"Frukt\": \"Ingefara\",\n        \"Bilmodell\": \"Infiniti\",\n        \"Fotbollsspelare\": \"Iniesta\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "21. Finish Round 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Round 3 finished, status 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/finish-round",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "finish-round"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "22. Check final game state",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Game status is GameEnded\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.status).to.equal(\"GameEnded\");",
+									"});",
+									"",
+									"pm.test(\"RoundsLeft is 0\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.roundsLeft).to.equal(0);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
