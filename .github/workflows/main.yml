@@ -33,7 +33,7 @@ jobs:
       
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
-        
+
       - name: Run frontend tests
         working-directory: ./WordPlay
         run: npm test
@@ -80,7 +80,7 @@ jobs:
 
     - name: Install dependencies
       working-directory: ./WordPlay
-      run: npm ci --frozen-lockfile
+      run: npm install
 
     - name: Install Playwright browsers
       working-directory: ./WordPlay
