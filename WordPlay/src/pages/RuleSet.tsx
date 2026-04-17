@@ -1,7 +1,7 @@
 import Card from "../components/Card";
 import Button from "../components/Button";
 
-import { hostGame, setGameSettings } from "../services/CreateGame";
+import { hostGame } from "../services/CreateGame";
 
 import "../index.css";
 import { useNavigate } from "react-router-dom";
@@ -82,9 +82,11 @@ export default function RuleSet() {
           try {
             const result = await hostGame({
               hostName: host.username,
+              rounds,
+              categories,
             });
 
-            await setGameSettings(result.gameId, categories, rounds);
+            //await setGameSettings(result.gameId, categories, rounds);
 
           localStorage.setItem("gameId", result.gameId);
           localStorage.setItem("playerId", result.playerId);
