@@ -13,10 +13,10 @@ export default function LobbyPage() {
     hostId: string;
     rounds: number;
     categories: string[];
-    players: { playerId: string; userName: string }[];
+    players: { playerId: string; userName: string; }[];
   }>(null);
 
-  
+
   const playerId = localStorage.getItem("playerId");
 
   const isJoined =
@@ -27,44 +27,44 @@ export default function LobbyPage() {
   const isHost = playerId === game?.hostId;
 
   // FETCH GAME
-useEffect(() => {
-  if (!gameId) return;
+  useEffect(() => {
+    if (!gameId) return;
 
-  let isActive = true;
+    let isActive = true;
 
-  const fetchGame = async () => {
-    try {
-      console.log("FETCHING GAME:", gameId);
+    const fetchGame = async () => {
+      try {
+        console.log("FETCHING GAME:", gameId);
 
-      const res = await fetch(`http://localhost:5095/games/${gameId}`);
-      const data = await res.json();
+        const res = await fetch(`http://localhost:5095/games/${gameId}`);
+        const data = await res.json();
 
-      console.log("BACKEND DATA:", {
-        gameId: data.gameId,
-        players: data.players.length,
-        hostId: data.hostId,
-        status: data.status
-      });
+        console.log("BACKEND DATA:", {
+          gameId: data.gameId,
+          players: data.players.length,
+          hostId: data.hostId,
+          status: data.status
+        });
 
-      if (!isActive) return;
+        if (!isActive) return;
 
-      setGame(data);
-    } catch (err) {
-      console.error("FETCH ERROR:", err);
-    }
-  };
+        setGame(data);
+      } catch (err) {
+        console.error("FETCH ERROR:", err);
+      }
+    };
 
-  // direkt första fetch
-  fetchGame();
+    // direkt första fetch
+    fetchGame();
 
-  // polling
-  const interval = setInterval(fetchGame, 2000);
+    // polling
+    const interval = setInterval(fetchGame, 2000);
 
-  return () => {
-    isActive = false;
-    clearInterval(interval);
-  };
-}, [gameId]);
+    return () => {
+      isActive = false;
+      clearInterval(interval);
+    };
+  }, [gameId]);
 
   // LOADING STATE
   if (!game) {
@@ -101,18 +101,18 @@ useEffect(() => {
             );
 
 
-            
+
             const data = await res.json();
 
-          localStorage.setItem("playerId", data.playerId);
-          
+            localStorage.setItem("playerId", data.playerId);
 
-          // hämta uppdaterad game state direkt
-          const refreshed = await fetch(`http://localhost:5095/games/${game.gameId}`);
-          const updated = await refreshed.json();
 
-          setGame(updated);
-          setUsername("");
+            // hämta uppdaterad game state direkt
+            const refreshed = await fetch(`http://localhost:5095/games/${game.gameId}`);
+            const updated = await refreshed.json();
+
+            setGame(updated);
+            setUsername("");
           }}
         >
           Join Game
@@ -160,13 +160,13 @@ useEffect(() => {
         <Card className="lobby-card">
           <p>Invite link:</p>
           <Button
-  onClick={() => {
-    const link = `${window.location.origin}/lobby/${game.gameId}`;
-    navigator.clipboard.writeText(link);
-  }}
->
-  Copy invite link
-</Button>
+            onClick={() => {
+              const link = `${window.location.origin}/lobby/${game.gameId}`;
+              navigator.clipboard.writeText(link);
+            }}
+          >
+            Copy invite link
+          </Button>
 
           <h2>Players</h2>
 

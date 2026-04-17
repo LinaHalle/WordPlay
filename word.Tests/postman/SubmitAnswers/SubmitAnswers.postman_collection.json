@@ -1,0 +1,226 @@
+{
+	"info": {
+		"_postman_id": "submitanswers-api-tests",
+		"name": "SubmitAnswers API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POST /games/{{gameId}}/answers",
+			"item": [
+				{
+					"name": "Submit valid answers (non-last player)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"roundFinished is false\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.roundFinished).to.be.false;",
+									"});",
+									"",
+									"pm.test(\"Status is WaitingForAnswers\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.status).to.equal(\"WaitingForAnswers\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId}}\",\n    \"answers\": {\n        \"Namn\": \"Vera\",\n        \"Land\": \"Vatikanstaten\",\n        \"Stad\": \"Venice\",\n        \"Frukt\": \"Vindruva\",\n        \"Bilmodell\": \"Volvo\",\n        \"Fotbollsspelare\": \"Vialli\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit valid answers (last player)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"roundFinished is true\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.roundFinished).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"Status is RoundFinished\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.status).to.equal(\"RoundFinished\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId2}}\",\n    \"answers\": {\n        \"Namn\": \"Bert\",\n        \"Land\": \"Belgien\",\n        \"Stad\": \"Berlin\",\n        \"Frukt\": \"Banan\",\n        \"Bilmodell\": \"BMW\",\n        \"Fotbollsspelare\": \"Benzema\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit to non-existent game",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return 404 for non-existent game\", function() {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId}}\",\n    \"answers\": {\n        \"Namn\": \"Vera\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/00000000-0000-0000-0000-000000000000/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "00000000-0000-0000-0000-000000000000", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit duplicate answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should not allow overwriting existing answers\", function() {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId}}\",\n    \"answers\": {\n        \"Namn\": \"Vera\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit when game not started",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Round not active when game not started, ska ge 400\", function() {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId}}\",\n    \"answers\": {\n        \"Namn\": \"Vera\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit with empty answers dict",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Empty answers accepted, status 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId}}\",\n    \"answers\": {}\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
