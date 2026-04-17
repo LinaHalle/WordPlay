@@ -24,7 +24,7 @@ jobs:
           cache-dependency-path: WordPlay/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build frontend
         run: npm run build
@@ -74,7 +74,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./WordPlay
-        run: npm ci
+        run: npm install
 
       - name: Install Playwright browsers
         working-directory: ./WordPlay

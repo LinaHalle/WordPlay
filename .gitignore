@@ -16,3 +16,6 @@ obj/
 
 # Editor / OS
 .DS_Store
+
+# Claude Code
+.claude/
