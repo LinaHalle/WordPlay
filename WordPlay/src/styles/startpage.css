@@ -64,16 +64,11 @@
   padding: 20px;
 
   width: 300px;
-  text-align: left;
-  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
 }
 
 @media (min-width: 768px){
   .main-card {
     max-width: 550px;
-  }
-
-  .modal {
-    width: 50%;
   }
 }

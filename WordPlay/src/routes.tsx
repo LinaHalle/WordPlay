@@ -1,24 +1,24 @@
-import type { JSX } from 'react';
-import { createElement } from 'react';
-//page components
-import StartPage from './pages/StartPage';
-import RuleSet from './pages/RuleSet';
-import LobbyPage from './pages/LobbyPage';
+// import type { JSX } from 'react';
+// import { createElement } from 'react';
+// //page components
+// import StartPage from './pages/StartPage';
+// import RuleSet from './pages/RuleSet';
+// import LobbyPage from './pages/LobbyPage';
 
 
 
 
-export default [
-  {
-    index: true,
-    element: <StartPage />
-  },
-  {
-    path: '/lobby',
-    element: <LobbyPage />
-  },
-  {
-    path: '/ruleset',
-    element: <RuleSet />
-  }
-];
+// export default [
+//   {
+//     index: true,
+//     element: <StartPage />
+//   },
+//   {
+//     path: '/lobby',
+//     element: <LobbyPage />
+//   },
+//   {
+//     path: '/ruleset',
+//     element: <RuleSet />
+//   }
+// ];

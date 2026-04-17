@@ -1,51 +1,58 @@
-.lobby-card {
-  width: 80%;
-  max-width: 550px;
-
-  padding: 20px;
-  border-radius: 12px;
-  border: 2px solid black;
-
+.lobby {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  text-align: center;
+}
 
+
+.cards-container {
+  display: flex;
+  gap: 24px;
+
+  justify-content: center;
+  align-items: flex-start;
+
+  flex-wrap: nowrap;
+
+}
+
+.card-section {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.long-card {
+  width: clamp(140px, 35vw, 260px);;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   align-items: center;
 }
 
-.lobby-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+.option {
   width: 100%;
+  display: flex;
+  justify-content: space-between;
+  
+  align-items: center;
+
+  cursor: pointer;
+}
+
+.option span {
   text-align: left;
 }
 
-.lobby-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-  align-items: center;
-}
 
-.categories-list {
-  max-height: 120px;
-  overflow-y: auto;
-  padding-left: 16px;
-}
-
-.scroll-list {
-  max-height: 120px;
-  overflow-y: auto;
-  padding-left: 16px;
-  width: 100%;
-}
-
-.lobby-card h2 {
+.option input {
+  cursor: pointer;
   margin: 0;
-}
-
-.lobby-card p {
-  margin: 4px 0;
+  justify-self: end;
 }

@@ -1,7 +1,7 @@
 import Card from "../components/Card";
 import Button from "../components/Button";
 
-import { hostGame } from "../services/CreateGame";
+import { hostGame, setGameSettings } from "../services/CreateGame";
 
 import "../index.css";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +27,7 @@ export default function RuleSet() {
       <input
         type="radio"
         name="rounds"
+        checked={rounds===num}
         onChange={() => setRounds(num)}  
       />
     </label>
@@ -76,18 +77,19 @@ export default function RuleSet() {
             return;
           }
 
+          if (!rounds) return;
+
           try {
             const result = await hostGame({
               hostName: host.username,
-              categories,
-              rounds: rounds!
-             
             });
+
+            await setGameSettings(result.gameId, categories, rounds);
 
           localStorage.setItem("gameId", result.gameId);
           localStorage.setItem("playerId", result.playerId);
 
-          navigate("/lobby");
+          navigate(`/lobby/${result.gameId}`);
         } catch (err) {
           console.error(err);
         }
