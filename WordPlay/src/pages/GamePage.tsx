@@ -2,14 +2,36 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Card from "../components/Card";
 import Button from "../components/Button";
+import "../index.css";
+
+type Player = {
+  playerId: string;
+  userName: string;
+};
+
+type Game = {
+  gameId: string;
+  hostId: string;
+  rounds: number;
+  categories: string[];
+  players: Player[];
+  currentLetter: string;
+  scoreboard: Record<string, number>;
+  status: number;
+};
+
+
 
 export default function GamePage() {
   const { gameId } = useParams();
   const playerId = localStorage.getItem("playerId");
 
-  const [game, setGame] = useState<any>(null);
-  const [answers, setAnswers] = useState<{ [key: string]: string }>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [game, setGame] = useState<Game | null>(null);
+  const [countdown, setCountdown] = useState(3);
+  const [showLetter, setShowLetter] = useState(false);
+
+  const [answers, setAnswers] = useState<{ [key: string]: string; }>({});
+  
 
   // FETCH GAME (polling)
   useEffect(() => {
@@ -19,6 +41,8 @@ export default function GamePage() {
       const res = await fetch(`http://localhost:5095/games/${gameId}`);
       const data = await res.json();
       setGame(data);
+
+     
     };
 
     fetchGame();
@@ -27,12 +51,30 @@ export default function GamePage() {
     return () => clearInterval(interval);
   }, [gameId]);
 
-  if (!game) return <p>Loading...</p>;
+  useEffect(() => {
+  if (game?.status !== 1) return;
 
-  // 🔤 current letter
-  const letter = game.currentLetter;
+  setCountdown(3);
+  setShowLetter(false);
 
-  // ✍️ handle input
+  const timer = setInterval(() => {
+    setCountdown(prev => {
+      if (prev <= 1) {
+        clearInterval(timer);
+        setShowLetter(true);
+        return 0;
+      }
+      return prev - 1;
+    });
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, [game?.status]);
+
+  // current letter
+  const letter = game?.currentLetter;
+
+  // handle input
   const handleChange = (category: string, value: string) => {
     setAnswers(prev => ({
       ...prev,
@@ -40,7 +82,7 @@ export default function GamePage() {
     }));
   };
 
-  // ✅ submit answers
+  //submit answers
   const submitAnswers = async () => {
     await fetch(`http://localhost:5095/games/${gameId}/answers`, {
       method: "POST",
@@ -53,40 +95,95 @@ export default function GamePage() {
       })
     });
 
-    setSubmitted(true);
   };
+
+  if (!game) {
+    return <p>Loading...</p>;
+  }
+
+  if (game.status === 1) {
+    return (
+      <div className="startpage">
+        <h1 className="title">
+          {!showLetter ? (
+            countdown === 3 ? "READY" :
+            countdown === 2 ? "SET" :
+            "GO!" 
+          ) : (
+              `LETTER: ${letter}`
+          )}
+        </h1>
+
+        <div className="lobby-wrapper">
+          <Card className="lobby-card">
+            <h2>Fill in answers</h2>
+
+            {game.categories.map((cat: string) => (
+              <div key={cat} className="answer-row">
+                <label>{cat}</label>
+                <input
+                  className="game-input"
+                  disabled={game.status !==1}
+                  value={answers[cat] || ""}
+                  onChange={(e) => handleChange(cat, e.target.value)}
+                />
+              </div>
+            ))}
+
+            <Button
+              onClick={submitAnswers}
+              disabled={game.status !== 1}
+            >
+              DONE
+            </Button>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (game.status === 2) {
+    console.log(game.scoreboard);
+     const isHost = game.hostId === playerId;
 
   return (
     <div className="startpage">
-      <h1 className="title">LETTER: {letter}</h1>
+      <h1 className="title">SCOREBOARD</h1>
 
       <div className="lobby-wrapper">
         <Card className="lobby-card">
-          <h2>Fill in answers</h2>
+          <h2>🏆 Results</h2>
 
-          {game.categories.map((cat: string) => (
-            <div key={cat} className="answer-row">
-              <label>{cat}</label>
-              <input
-                className="game-input"
-                disabled={submitted}
-                value={answers[cat] || ""}
-                onChange={(e) => handleChange(cat, e.target.value)}
-              />
-            </div>
-          ))}
+          <ul className="score-list">
+            {Object.entries(game.scoreboard || {})
+              .sort((a, b) => b[1] - a[1])
+              .map(([id, score]) => {
+                const player = game.players.find(p => p.playerId === id);
 
-          {!submitted ? (
-            <Button onClick={submitAnswers}>
-              DONE
+                return (
+                  <li key={id} className="score-row">
+                    <span className="player-name">
+                      <strong>{player?.userName ?? "Unknown"}</strong>{" "}
+                    </span>
+
+                    <span className="player-score">
+                      {score} pts
+                    </span>
+                  </li>
+                );
+              })}
+          </ul>
+
+          {isHost && (
+            <Button className="next-round-btn">
+              Next Round
             </Button>
-          ) : (
-            <p>Waiting for other players...</p>
           )}
         </Card>
       </div>
     </div>
   );
+}
 }
 
 GamePage.route = {

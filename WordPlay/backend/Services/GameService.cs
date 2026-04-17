@@ -42,33 +42,96 @@ public class GameService
       return (false, null, null);
     if (state.Players.Count < 2)
       return (true, null, "Need at least 2 players");
-    state.Status = GameStatus.InRound;
-    state.CurrentLetter = LetterGenerator.RandomLetter();
-    state.Answers = new Dictionary<Guid, Dictionary<string, string>>();
+    state.CurrentRound = 0;
+    state.Scoreboard = new Dictionary<Guid, int>();
+
+    StartRound(state);
+
     return (true, state.CurrentLetter, null);
   }
 
+  private void StartRound(GameState state)
+  {
+    state.Status = GameStatus.InRound;
+    state.RoundStartedAt = DateTime.UtcNow;
+    state.IsScored = false;
+
+    state.CurrentLetter = LetterGenerator.RandomLetter();
+
+    state.Answers = new Dictionary<Guid, Dictionary<string, string>>();
+    state.SubmittedPlayers = new HashSet<Guid>();
+  }
+
+  public (bool found, string? letter, string? error, bool gameFinished) NextRound(Guid gameId)
+  {
+    if (!_games.TryGetValue(gameId, out var state))
+      return (false, null, null, false);
+
+    if (!state.IsScored)
+      return (true, null, "Round not scored yet", false);
+
+    state.CurrentRound++;
+
+    if (state.CurrentRound >= state.Rounds)
+    {
+      state.Status = GameStatus.Finished;
+      return (true, null, null, true);
+    }
+
+    StartRound(state);
+
+    return (true, state.CurrentLetter, null, false);
+  }
   public (bool found, string? error, bool roundFinished) SubmitAnswers(Guid gameId, SubmitAnswersRequest req)
   {
     if (!_games.TryGetValue(gameId, out var state))
       return (false, "Not found", false);
+
     if (state.Status != GameStatus.InRound)
       return (true, "Round not active", false);
+
+    state.RoundStartedAt ??= DateTime.UtcNow;
+
     state.Answers[req.PlayerId] = req.Answers;
-    if (state.Answers.Count == state.Players.Count)
-      state.Status = GameStatus.RoundFinished;
+
+    state.SubmittedPlayers ??= new HashSet<Guid>();
+    state.SubmittedPlayers.Add(req.PlayerId);
+
+    TryFinishRound(state);
     return (true, null, state.Status == GameStatus.RoundFinished);
+  }
+
+  private void TryFinishRound(GameState state)
+  {
+    if (state.Status != GameStatus.InRound)
+      return;
+
+    var elapsed = DateTime.UtcNow - state.RoundStartedAt;
+
+    if (elapsed >= TimeSpan.FromSeconds(5) ||
+        state.SubmittedPlayers.Count == state.Players.Count)
+    {
+      state.Status = GameStatus.RoundFinished;
+    }
   }
 
   public (bool found, RoundResult? result, string? error) FinishRound(Guid gameId)
   {
     if (!_games.TryGetValue(gameId, out var state))
       return (false, null, null);
+
     if (state.Status != GameStatus.RoundFinished)
       return (true, null, "Round not finished yet");
-    var roundResult = Scoring.Calculate(state);
-    state.Scoreboard = roundResult.Scoreboard;
-    return (true, roundResult, null);
+
+    if (!state.IsScored)
+    {
+      var result = Scoring.Calculate(state);
+      state.Scoreboard = result.Scoreboard;
+      state.IsScored = true;
+    }
+    Console.WriteLine($"SCORING RUNNING - players: {state.Players.Count}");
+    Console.WriteLine($"answers: {state.Answers.Count}");
+    return (true, new RoundResult(state.Scoreboard), null);
   }
 
   public (bool found, GameState? state) GetGameState(Guid gameId)

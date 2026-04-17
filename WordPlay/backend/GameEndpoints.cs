@@ -54,6 +54,7 @@ public static class GameEndpoints
     {
       var (found, state) = gameService.GetGameState(gameId);
       if (!found) return Results.NotFound();
+
       return Results.Ok(state);
     });
   }

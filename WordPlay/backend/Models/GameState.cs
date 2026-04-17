@@ -11,5 +11,9 @@ public class GameState
   public string CurrentLetter { get; set; } = "";
   public Dictionary<Guid, Dictionary<string, string>> Answers { get; set; } = new();
   public Dictionary<Guid, int> Scoreboard { get; set; } = new();
+  public DateTime? RoundStartedAt { get; set; }
+  public HashSet<Guid> SubmittedPlayers { get; set; } = new();
+  public bool IsScored { get; set; } = false;
+  public int CurrentRound { get; set; } = 0;
 }
 
