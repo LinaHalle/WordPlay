@@ -10,34 +10,44 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
+          cache-dependency-path: WordPlay/package-lock.json
 
-      - name: Install frontend deps
+      - name: Install frontend dependencies
         working-directory: ./WordPlay
-        run: npm install
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: ./WordPlay
+        run: npx playwright install
 
       - name: Build frontend
         working-directory: ./WordPlay
         run: npm run build
 
-      - name: Install Playwright browsers
-        working-directory: ./WordPlay
-        run: npx playwright install --with-deps
-
       - name: Test frontend
         working-directory: ./WordPlay
-        run: npm test 
-
+        run: npm test
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0
+          dotnet-version: 8.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
 
       - name: Restore backend
         working-directory: ./WordPlay/backend
@@ -50,3 +60,7 @@ jobs:
       - name: Test backend
         working-directory: ./WordPlay/backend
         run: dotnet test --no-build
+
+      - name: Publish backend
+        working-directory: ./WordPlay/backend
+        run: dotnet publish EverySecondLetter.csproj -c Release -o ../out --no-restore
