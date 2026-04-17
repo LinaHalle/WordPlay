@@ -22,6 +22,16 @@
 									"pm.test(\"Response contains letter\", function() {",
 									"    const data = pm.response.json();",
 									"    pm.expect(data).to.have.property(\"letter\");",
+									"});",
+									"",
+									"pm.test(\"Status is InRound\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.status).to.equal(\"InRound\");",
+									"});",
+									"",
+									"pm.test(\"Letter is a single character\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.letter).to.have.lengthOf(1);",
 									"});"
 								],
 								"type": "text/javascript",
@@ -34,20 +44,9 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/games/{{gameId}}/start?playerId={{playerId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"games",
-								"{{gameId}}",
-								"start"
-							],
-							"query": [
-								{
-									"key": "playerId",
-									"value": "{{playerId}}"
-								}
-							]
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "start"],
+							"query": [{"key": "playerId", "value": "{{playerId}}"}]
 						}
 					},
 					"response": []
@@ -73,20 +72,9 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/games/{{gameId}}/start?playerId={{playerId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"games",
-								"{{gameId}}",
-								"start"
-							],
-							"query": [
-								{
-									"key": "playerId",
-									"value": "{{playerId}}"
-								}
-							]
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "start"],
+							"query": [{"key": "playerId", "value": "{{playerId}}"}]
 						}
 					},
 					"response": []
@@ -112,20 +100,70 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/games/{{gameId}}/start?playerId={{playerId2}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"games",
-								"{{gameId}}",
-								"start"
-							],
-							"query": [
-								{
-									"key": "playerId",
-									"value": "{{playerId2}}"
-								}
-							]
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "start"],
+							"query": [{"key": "playerId", "value": "{{playerId2}}"}]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Start non-existent game",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Non-existent game ska ge 404\", function() {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/00000000-0000-0000-0000-000000000000/start?playerId={{playerId}}",
+							"host": ["{{base_url}}"],
+							"path": ["games", "00000000-0000-0000-0000-000000000000", "start"],
+							"query": [{"key": "playerId", "value": "{{playerId}}"}]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Start when already InRound",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Already InRound ska ge 400\", function() {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error message is correct\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data).to.equal(\"Game is not in a startable state\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/start?playerId={{playerId}}",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "start"],
+							"query": [{"key": "playerId", "value": "{{playerId}}"}]
 						}
 					},
 					"response": []

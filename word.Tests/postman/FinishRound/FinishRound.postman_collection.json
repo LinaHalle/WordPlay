@@ -17,6 +17,11 @@
 								"exec": [
 									"pm.test(\"Should give 200 when round is finished\", function() {",
 									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains scoreboard\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data).to.have.property(\"scoreboard\");",
 									"});"
 								],
 								"type": "text/javascript",
@@ -29,14 +34,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/games/{{gameId}}/finish-round",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"games",
-								"{{gameId}}",
-								"finish-round"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "finish-round"]
 						}
 					},
 					"response": []
@@ -62,14 +61,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/games/00000000-0000-0000-0000-000000000000/finish-round",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"games",
-								"00000000-0000-0000-0000-000000000000",
-								"finish-round"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["games", "00000000-0000-0000-0000-000000000000", "finish-round"]
 						}
 					},
 					"response": []
@@ -95,14 +88,89 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/games/{{gameId}}/finish-round",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"games",
-								"{{gameId}}",
-								"finish-round"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "finish-round"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Finish when InRound",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"InRound ska ge 400\", function() {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/finish-round",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "finish-round"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Finish when ShowingLeaderboard",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ShowingLeaderboard ska ge 400\", function() {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/finish-round",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "finish-round"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Finish when GameEnded",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"GameEnded ska ge 400\", function() {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/finish-round",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "finish-round"]
 						}
 					},
 					"response": []

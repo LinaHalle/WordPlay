@@ -19,9 +19,11 @@
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Rounds valda ger 200\", function() {",
-									"    pm.response.to.have.status(200);",
-									"})"
+									"pm.test(\"Response contains gameId and status\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data).to.have.property(\"gameId\");",
+									"    pm.expect(data).to.have.property(\"status\");",
+									"});"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -34,22 +36,12 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"Categories\": [\"Namn\", \"Land\", \"Stad\", \"Frukt\", \"Bilmodell\", \"Fotbollsspelare\"],\n    \"Rounds\": 3\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"options": {"raw": {"language": "json"}}
 						},
 						"url": {
 							"raw": "{{base_url}}/games/{{gameId}}/settings",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"games",
-								"{{gameId}}",
-								"settings"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "settings"]
 						}
 					},
 					"response": []
@@ -76,22 +68,12 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"Categories\": [],\n    \"Rounds\": 4\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"options": {"raw": {"language": "json"}}
 						},
 						"url": {
 							"raw": "{{base_url}}/games/{{gameId}}/settings",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"games",
-								"{{gameId}}",
-								"settings"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "settings"]
 						}
 					},
 					"response": []
@@ -105,7 +87,7 @@
 								"exec": [
 									"pm.test(\"Inga rounds valda ska ge 400\", function() {",
 									"    pm.response.to.have.status(400);",
-									"})"
+									"});"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -118,22 +100,108 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"Categories\": [\"Namn\", \"Land\", \"Stad\", \"Frukt\", \"Bilmodell\", \"Fotbollsspelare\"],\n    \"Rounds\": 0\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"options": {"raw": {"language": "json"}}
 						},
 						"url": {
 							"raw": "{{base_url}}/games/{{gameId}}/settings",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"games",
-								"{{gameId}}",
-								"settings"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "settings"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Negative rounds",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Negativa rounds ska ge 400\", function() {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Categories\": [\"Namn\", \"Land\", \"Stad\", \"Frukt\", \"Bilmodell\", \"Fotbollsspelare\"],\n    \"Rounds\": -1\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/settings",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "settings"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Non-existent game",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Non-existent game ska ge 404\", function() {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Categories\": [\"Namn\", \"Land\", \"Stad\"],\n    \"Rounds\": 3\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/00000000-0000-0000-0000-000000000000/settings",
+							"host": ["{{base_url}}"],
+							"path": ["games", "00000000-0000-0000-0000-000000000000", "settings"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Overwrite settings (second call)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Overwrite settings ska ge 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Categories\": [\"Sports\", \"Movies\", \"Animals\"],\n    \"Rounds\": 5\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/settings",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "settings"]
 						}
 					},
 					"response": []
