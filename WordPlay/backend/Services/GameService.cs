@@ -63,6 +63,8 @@ public class GameService
     {
         if (!_games.TryGetValue(gameId, out var state))
             return (false, null, null);
+        if (state.Status != GameStatus.WaitingForPlayers && state.Status != GameStatus.ShowingLeaderboard)
+            return (true, null, "Game is not in a startable state");
         if (state.Players.Count < 2)
             return (true, null, "Need at least 2 players");
         var player = state.Players.Find(p => p.PlayerId == playerId);
@@ -99,7 +101,7 @@ public class GameService
         state.Scoreboard = roundResult.Scoreboard;
         state.DecrementRoundsLeft();
         if (state.GetRoundsLeft() > 0)
-            state.Status = GameStatus.InRound;
+            state.Status = GameStatus.ShowingLeaderboard;
         if (state.GetRoundsLeft() == 0)
             state.Status = GameStatus.GameEnded;
         return (true, roundResult, null);
