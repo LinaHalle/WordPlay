@@ -10,8 +10,14 @@ public static class Scoring
 
     foreach (var category in state.Categories)
     {
-      var answers = state.Answers
-          .ToDictionary(x => x.Key, x => x.Value.GetValueOrDefault(category, ""));
+      var answers = state.Answers.ToDictionary(
+        x => x.Key,
+         x =>
+         {
+           var svar = x.Value.GetValueOrDefault(category, "");
+           return svar.StartsWith(state.CurrentLetter, StringComparison.OrdinalIgnoreCase) ? svar : "";
+         });
+
 
       var grouped = answers
           .GroupBy(x => x.Value.Trim().ToLower())

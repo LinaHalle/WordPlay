@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-
+/*retry*/ 
 
 test('Click rounds and categories', async ({ page }) => {
   await page.goto('localhost:5173/ruleSet');

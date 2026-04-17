@@ -19,10 +19,10 @@ export default function StartPage() {
           className="input"
           placeholder="ENTER NAME"
           value={username}
-          onChange={(e) => setUsername(e.target.value)}  
+          onChange={(e) => setUsername(e.target.value)}
         />
         <Button
-        className="HostButton"
+          className="HostButton"
           disabled={!username}
           onClick={() => {
             const playerId = crypto.randomUUID();
@@ -32,10 +32,10 @@ export default function StartPage() {
               playerId,
               isHost: true
             };
-            localStorage.setItem("currentPlayer",JSON.stringify(player));
+            localStorage.setItem("currentPlayer", JSON.stringify(player));
             navigate("/ruleSet");
           }}
-          >
+        >
           HOST GAME
         </Button>
         <p>Want to join a game? Paste link below</p>
@@ -56,38 +56,21 @@ export default function StartPage() {
         RULES
       </Button>
       {showRules && (
-  <div className="modal-overlay" onClick={() => setShowRules(false)}>
-    <div className="modal" onClick={(e) => e.stopPropagation()}>
-   <h2>Brainfart Rules</h2>
+        <div className="modal-overlay" onClick={() => setShowRules(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h2>Rules</h2>
+            <p>
+              - Regel 1 <br />
+              - Regel 2 <br />
+              - Regel 3
+            </p>
 
-<p>
-  Brainfart is a word game where players fill categories based on a random letter under time pressure.<br />
-  <br />
-
-  Setup: The Host choose at least 3 categories (e.g. Name, Country, City) and number of rounds.<br />
-  <br />
-
-  Round: A random letter is generated. All answers must start with that letter.<br />
-  <br />
-
-  Task: Each player enters one word per category starting with the letter.<br />
-  <br />
-
-  End: The round ends when a player presses Done. A 5 second timer starts and then all answers are locked and compared.<br />
-  <br />
-
-  Scoring: Different answers = 10 points each, single answer = 20 points, same answer = 5 points, empty = 0.<br />
-  <br />
-
-  Goal: Highest total score after all rounds wins Brainfart.
-</p>
-
-      <Button onClick={() => setShowRules(false)}>CLOSE</Button>
+            <Button onClick={() => setShowRules(false)}>CLOSE</Button>
+          </div>
+        </div>
+      )}
     </div>
-  </div>
-)}
-    </div>
-    
+
   );
 }
 
@@ -97,4 +80,4 @@ StartPage.route = {
   path: '/',
   menuLabel: 'StartPage',
   index: 1
-}
+};

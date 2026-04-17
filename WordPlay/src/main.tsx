@@ -4,8 +4,8 @@ import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import StartPage from './pages/StartPage';
-import RuleSet from './pages/RuleSet';
 import LobbyPage from './pages/LobbyPage';
+import RuleSet from './pages/RuleSet';
 
 const router = createBrowserRouter([
   {
@@ -13,12 +13,12 @@ const router = createBrowserRouter([
     element: <StartPage />
   },
   {
-    path: '/lobby',
-    element: <LobbyPage />
-  },
-  {
     path: '/ruleSet',
     element: <RuleSet />
+  },
+  {
+    path: '/lobby/:gameId',
+    element: <LobbyPage />
   }
 ]);
 
