@@ -24,12 +24,15 @@ jobs:
           cache-dependency-path: WordPlay/package-lock.json
 
       - name: Install dependencies
-        run: npm install
+        working-directory: ./WordPlay
+        run: npm ci
 
       - name: Build frontend
+        working-directory: ./WordPlay
         run: npm run build
 
       - name: Run frontend tests
+        working-directory: ./WordPlay
         run: npm test
 
 
@@ -63,26 +66,26 @@ jobs:
     needs: [frontend, backend]
 
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: WordPlay/package-lock.json
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: npm
+        cache-dependency-path: WordPlay/package-lock.json
 
-      - name: Install dependencies
-        working-directory: ./WordPlay
-        run: npm install
+    - name: Install dependencies
+      working-directory: ./WordPlay
+      run: npm ci --frozen-lockfile
 
-      - name: Install Playwright browsers
-        working-directory: ./WordPlay
-        run: npx playwright install --with-deps
+    - name: Install Playwright browsers
+      working-directory: ./WordPlay
+      run: npx playwright install chromium --with-deps
 
-      - name: Run Playwright tests
-        working-directory: ./WordPlay
-        run: npx playwright test tests
+    - name: Run tests
+      working-directory: ./WordPlay
+      run: npx playwright test
 
   api-tests:
     runs-on: ubuntu-latest
