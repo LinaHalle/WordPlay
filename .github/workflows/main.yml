@@ -6,8 +6,12 @@ on:
   pull_request:
 
 jobs:
-  build:
+  frontend:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./WordPlay
 
     steps:
       - uses: actions/checkout@v4
@@ -16,37 +20,129 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
+          cache-dependency-path: WordPlay/package-lock.json
 
-      - name: Install frontend deps
+      - name: Install dependencies
         working-directory: ./WordPlay
-        run: npm install
+        run: npm i
 
       - name: Build frontend
         working-directory: ./WordPlay
         run: npm run build
-
+      
       - name: Install Playwright browsers
-        working-directory: ./WordPlay
         run: npx playwright install --with-deps
 
-      - name: Test frontend
+      - name: Run frontend tests
         working-directory: ./WordPlay
-        run: npm test 
+        run: npm test
 
+
+  backend:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./WordPlay/backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Test backend
+        run: dotnet test --no-build
+
+
+  playwright:
+    runs-on: ubuntu-latest
+    needs: [frontend, backend]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: npm
+        cache-dependency-path: WordPlay/package-lock.json
+
+    - name: Install dependencies
+      working-directory: ./WordPlay
+      run: npm install
+
+    - name: Install Playwright browsers
+      working-directory: ./WordPlay
+      run: npx playwright install chromium --with-deps
+
+    - name: Run tests
+      working-directory: ./WordPlay
+      run: npx playwright test
+
+  api-tests:
+    runs-on: ubuntu-latest
+    needs: playwright
+
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0
 
-      - name: Restore backend
-        working-directory: ./WordPlay/backend
-        run: dotnet restore
+      - name: Install Newman
+        run: npm install -g newman
 
-      - name: Build backend
+      - name: Start backend
         working-directory: ./WordPlay/backend
-        run: dotnet build --no-restore
+        run: dotnet run --urls "http://localhost:5095" &
 
-      - name: Test backend
-        working-directory: ./WordPlay/backend
-        run: dotnet test --no-build
+      - name: Wait for backend to be ready
+        run: |
+          for i in $(seq 1 30); do
+            if curl -s http://localhost:5095/games/00000000-0000-0000-0000-000000000000 > /dev/null 2>&1; then
+              echo "Backend is ready"
+              break
+            fi
+            echo "Waiting for backend... ($i/30)"
+            sleep 2
+          done
+
+      - name: Run CreateLobby tests
+        run: newman run word.Tests/postman/CreateLobby/CreateLobby.postman_collection.json --env-var "base_url=http://localhost:5095"
+
+      - name: Run JoinGame tests
+        run: newman run word.Tests/postman/JoinGame/JoinGame.postman_collection.json --env-var "base_url=http://localhost:5095"
+
+      - name: Run ChangeSettings tests
+        run: newman run word.Tests/postman/ChangeSettings/ChangeSettings.postman_collection.json --env-var "base_url=http://localhost:5095"
+
+      - name: Run StartGame tests
+        run: newman run word.Tests/postman/StartGame/StartGame.postman_collection.json --env-var "base_url=http://localhost:5095"
+
+      - name: Run SubmitAnswers tests
+        run: newman run word.Tests/postman/SubmitAnswers/SubmitAnswers.postman_collection.json --env-var "base_url=http://localhost:5095"
+
+      - name: Run FinishRound tests
+        run: newman run word.Tests/postman/FinishRound/FinishRound.postman_collection.json --env-var "base_url=http://localhost:5095"
+
+      - name: Run GetGameState tests
+        run: newman run word.Tests/postman/GetGameState/GetGameState.postman_collection.json --env-var "base_url=http://localhost:5095"
+
+      - name: Run FullGameFlow tests
+        run: newman run word.Tests/postman/FullGameFlow/FullGameFlow.postman_collection.json --env-var "base_url=http://localhost:5095"
+
+      - name: Run EdgeCases tests
+        run: newman run word.Tests/postman/EdgeCases/EdgeCases.postman_collection.json --env-var "base_url=http://localhost:5095"
