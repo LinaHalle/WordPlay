@@ -36,6 +36,8 @@ public class CreateGameTest
       }
     };
 
+    //act
+    scoringTest.Calculate(state);
 
 
   }
