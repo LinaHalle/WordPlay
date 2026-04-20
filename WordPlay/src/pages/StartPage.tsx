@@ -39,15 +39,20 @@ export default function StartPage() {
           HOST GAME
         </Button>
         <p>Want to join a game? Paste link below</p>
-        <input
-          className="btn join-input"
-          placeholder="PASTE LINK"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              navigate("/lobby");
-            }
-          }}
-        />
+       <input
+  className="btn join-input"
+  placeholder="PASTE LINK"
+  onKeyDown={(e) => {
+    if (e.key === "Enter") {
+      const value = (e.target as HTMLInputElement).value;
+
+      // om du klistrar full länk → extrahera id
+      const gameId = value.split("/").pop();
+
+      navigate(`/lobby/${gameId}`);
+    }
+  }}
+/>
       </Card>
 
       <p className="help-text">Don't know the rules?</p>
