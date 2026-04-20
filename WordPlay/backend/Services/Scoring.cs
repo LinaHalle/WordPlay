@@ -6,7 +6,15 @@ public static class Scoring
 {
   public static RoundResult Calculate(GameState state)
   {
-    var scores = state.Scoreboard ?? new Dictionary<Guid, int>();
+    var scores = state.Scoreboard != null
+     ? new Dictionary<Guid, int>(state.Scoreboard)
+     : new Dictionary<Guid, int>();
+
+    foreach (var player in state.Players)
+    {
+      if (!scores.ContainsKey(player.PlayerId))
+        scores[player.PlayerId] = 0;
+    }
 
     foreach (var category in state.Categories)
     {

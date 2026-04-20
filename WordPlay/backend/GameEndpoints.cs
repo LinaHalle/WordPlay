@@ -52,12 +52,28 @@ public static class GameEndpoints
       return Results.Ok(new { roundFinished, status = state?.Status.ToString() });
     });
 
+    app.MapPost("/games/{gameId:guid}/next-round", (Guid gameId) =>
+    {
+      var (found, letter, error, finished) = gameService.NextRound(gameId);
+      if (!found) return Results.NotFound();
+      if (error != null) return Results.BadRequest(error);
+      return Results.Ok(new { letter, finished });
+    });
+
     app.MapPost("/games/{gameId:guid}/finish-round", (Guid gameId) =>
     {
       var (found, result, error) = gameService.FinishRound(gameId);
       if (!found) return Results.NotFound();
       if (error != null) return Results.BadRequest(error);
       return Results.Ok(result);
+    });
+
+    app.MapPost("/games/{gameId:guid}/restart", (Guid gameId) =>
+    {
+      var (found, error) = gameService.RestartGame(gameId);
+      if (!found) return Results.NotFound();
+      if (error != null) return Results.BadRequest(error);
+      return Results.Ok();
     });
 
     app.MapGet("/games/{gameId:guid}", (Guid gameId) =>
