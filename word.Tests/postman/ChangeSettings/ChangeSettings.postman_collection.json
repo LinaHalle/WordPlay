@@ -9,6 +9,39 @@
 			"name": "POST /games/{{gameId}}/settings",
 			"item": [
 				{
+					"name": "Setup: Create Lobby",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"if (pm.response.code === 201) {",
+									"    const data = pm.response.json();",
+									"    pm.environment.set(\"gameId\", data.gameId);",
+									"    pm.environment.set(\"playerId\", data.playerId);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games?hostName=SettingsHost",
+							"host": ["{{base_url}}"],
+							"path": ["games"],
+							"query": [{"key": "hostName", "value": "SettingsHost"}]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Valid categories and rounds",
 					"event": [
 						{

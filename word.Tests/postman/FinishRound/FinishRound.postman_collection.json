@@ -9,6 +9,254 @@
 			"name": "POST /games/{{gameId}}/finish-round",
 			"item": [
 				{
+					"name": "Setup: Create Lobby",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"if (pm.response.code === 201) {",
+									"    const data = pm.response.json();",
+									"    pm.environment.set(\"gameId\", data.gameId);",
+									"    pm.environment.set(\"playerId\", data.playerId);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games?hostName=FinishHost",
+							"host": ["{{base_url}}"],
+							"path": ["games"],
+							"query": [{"key": "hostName", "value": "FinishHost"}]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setup: Join Player 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Player 2 joined\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const data = pm.response.json();",
+									"    pm.environment.set(\"player2Id\", data.playerId);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"name\": \"Player2\" }",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/join",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "join"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setup: Set Settings (2 rounds)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Settings accepted\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"Categories\": [\"Namn\", \"Land\", \"Stad\"], \"Rounds\": 2 }",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/settings",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "settings"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setup: Start Game",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Game started\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const data = pm.response.json();",
+									"    pm.environment.set(\"currentLetter\", data.letter);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/start?playerId={{playerId}}",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "start"],
+							"query": [{"key": "playerId", "value": "{{playerId}}"}]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Finish when InRound",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"InRound ska ge 400\", function() {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/finish-round",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "finish-round"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setup: Player 1 Answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Player 1 answers accepted\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"PlayerId\": \"{{playerId}}\", \"Answers\": { \"Namn\": \"Anna\", \"Land\": \"Argentina\", \"Stad\": \"Amsterdam\" } }",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Finish when round not finished",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should give 400 trying to finish a round that is not finished\", function() {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/finish-round",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "finish-round"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setup: Player 2 Answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Player 2 answers accepted\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"PlayerId\": \"{{player2Id}}\", \"Answers\": { \"Namn\": \"Bertil\", \"Land\": \"Brasilien\", \"Stad\": \"Berlin\" } }",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Finish when all players submitted",
 					"event": [
 						{
@@ -68,60 +316,6 @@
 					"response": []
 				},
 				{
-					"name": "Finish when round not finished",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Should give 400 trying to finish a round that is not finished\", function() {",
-									"    pm.response.to.have.status(400);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/games/{{gameId}}/finish-round",
-							"host": ["{{base_url}}"],
-							"path": ["games", "{{gameId}}", "finish-round"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Finish when InRound",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"InRound ska ge 400\", function() {",
-									"    pm.response.to.have.status(400);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/games/{{gameId}}/finish-round",
-							"host": ["{{base_url}}"],
-							"path": ["games", "{{gameId}}", "finish-round"]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Finish when ShowingLeaderboard",
 					"event": [
 						{
@@ -134,6 +328,121 @@
 								],
 								"type": "text/javascript",
 								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/finish-round",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "finish-round"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setup: Start Round 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Round 2 started\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/start?playerId={{playerId}}",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "start"],
+							"query": [{"key": "playerId", "value": "{{playerId}}"}]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setup: R2 Player 1 Answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"R2 Player 1 answers accepted\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"PlayerId\": \"{{playerId}}\", \"Answers\": { \"Namn\": \"Carl\", \"Land\": \"Chile\", \"Stad\": \"Chicago\" } }",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setup: R2 Player 2 Answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"R2 Player 2 answers accepted\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"PlayerId\": \"{{player2Id}}\", \"Answers\": { \"Namn\": \"David\", \"Land\": \"Danmark\", \"Stad\": \"Dublin\" } }",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setup: Finish Round 2 (game ends)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Round 2 finished, game ended\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
