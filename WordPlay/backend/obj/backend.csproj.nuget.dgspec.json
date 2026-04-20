@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\halle\\testing\\WordPlay\\wordplay\\backend\\backend.csproj": {}
+    "C:\\Users\\david\\test-repos\\WordPlay\\WordPlay\\backend\\backend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\halle\\testing\\WordPlay\\wordplay\\backend\\backend.csproj": {
+    "C:\\Users\\david\\test-repos\\WordPlay\\WordPlay\\backend\\backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\halle\\testing\\WordPlay\\wordplay\\backend\\backend.csproj",
+        "projectUniqueName": "C:\\Users\\david\\test-repos\\WordPlay\\WordPlay\\backend\\backend.csproj",
         "projectName": "backend",
-        "projectPath": "C:\\Users\\halle\\testing\\WordPlay\\wordplay\\backend\\backend.csproj",
-        "packagesPath": "C:\\Users\\halle\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\halle\\testing\\WordPlay\\wordplay\\backend\\obj\\",
+        "projectPath": "C:\\Users\\david\\test-repos\\WordPlay\\WordPlay\\backend\\backend.csproj",
+        "packagesPath": "C:\\Users\\david\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\david\\test-repos\\WordPlay\\WordPlay\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\halle\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\david\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"

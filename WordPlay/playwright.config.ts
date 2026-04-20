@@ -1,4 +1,4 @@
-import { defineConfig} from '@playwright/test';
+import { defineConfig } from '@playwright/test';
 
 
 /**
@@ -12,12 +12,15 @@ import { defineConfig} from '@playwright/test';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig(
+
+export default defineConfig({
+  webServer:
   {
-    webServer: 
-    {
-      command: "npm run dev",
-      url: "http://localhost:5173",
-      reuseExistingServer: !process.env.CI,
-    },
+    command: 'npm run dev',
+    port: 5173,
+    reuseExistingServer: !process.env.CI,
+  },
+  use: {
+    baseURL: 'http://localhost:5000',
+  }
 });
