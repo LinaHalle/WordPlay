@@ -95,3 +95,16 @@ C:\Users\ebadi\repos\Test, integration och leverans\WordPlay\word.Tests\Brainfar
 C:\Users\ebadi\repos\Test, integration och leverans\WordPlay\word.Tests\Brainfart.Tests\obj\Debug\net10.0\Brainfart.Tests.pdb
 C:\Users\ebadi\repos\Test, integration och leverans\WordPlay\word.Tests\Brainfart.Tests\obj\Debug\net10.0\Brainfart.Tests.genruntimeconfig.cache
 C:\Users\ebadi\repos\Test, integration och leverans\WordPlay\word.Tests\Brainfart.Tests\obj\Debug\net10.0\ref\Brainfart.Tests.dll
+C:\Users\ebadi\repos\Test, integration och leverans\WordPlay\word.Tests\Brainfart.Tests\bin\Debug\net10.0\.msCoverageSourceRootsMapping_Brainfart.Tests
+C:\Users\ebadi\repos\Test, integration och leverans\WordPlay\word.Tests\Brainfart.Tests\bin\Debug\net10.0\CoverletSourceRootsMapping_Brainfart.Tests
+C:\Users\ebadi\repos\Test, integration och leverans\WordPlay\word.Tests\Brainfart.Tests\bin\Debug\net10.0\backend.deps.json
+C:\Users\ebadi\repos\Test, integration och leverans\WordPlay\word.Tests\Brainfart.Tests\bin\Debug\net10.0\backend.runtimeconfig.json
+C:\Users\ebadi\repos\Test, integration och leverans\WordPlay\word.Tests\Brainfart.Tests\bin\Debug\net10.0\appsettings.Development.json
+C:\Users\ebadi\repos\Test, integration och leverans\WordPlay\word.Tests\Brainfart.Tests\bin\Debug\net10.0\appsettings.json
+C:\Users\ebadi\repos\Test, integration och leverans\WordPlay\word.Tests\Brainfart.Tests\bin\Debug\net10.0\public\all_brands.json
+C:\Users\ebadi\repos\Test, integration och leverans\WordPlay\word.Tests\Brainfart.Tests\bin\Debug\net10.0\backend.staticwebassets.endpoints.json
+C:\Users\ebadi\repos\Test, integration och leverans\WordPlay\word.Tests\Brainfart.Tests\bin\Debug\net10.0\backend.exe
+C:\Users\ebadi\repos\Test, integration och leverans\WordPlay\word.Tests\Brainfart.Tests\bin\Debug\net10.0\Microsoft.AspNetCore.OpenApi.dll
+C:\Users\ebadi\repos\Test, integration och leverans\WordPlay\word.Tests\Brainfart.Tests\bin\Debug\net10.0\Microsoft.OpenApi.dll
+C:\Users\ebadi\repos\Test, integration och leverans\WordPlay\word.Tests\Brainfart.Tests\bin\Debug\net10.0\backend.dll
+C:\Users\ebadi\repos\Test, integration och leverans\WordPlay\word.Tests\Brainfart.Tests\bin\Debug\net10.0\backend.pdb
