@@ -1,5 +1,8 @@
 namespace Brainfart.Tests;
 
+using Brainfart.Models;
+using Brainfart.Services;
+
 public class CreateGameTest
 {
   [Fact]
@@ -29,15 +32,18 @@ public class CreateGameTest
         {
           player2Id, new Dictionary<string, string>
           {
-            { "Cities", "Alaska"},
-            {"Fruit", "Ananas"}
+            { "Cities", "Aloha"},
+            {"Fruit", "Alakazam"}
           }
         }
       }
     };
 
     //act
-    scoringTest.Calculate(state);
+    var result = Scoring.Calculate(state);
+
+    Assert.Equal(40, result.Scoreboard[player1Id]);
+    Assert.Equal(0, result.Scoreboard[player2Id]);
 
 
   }
