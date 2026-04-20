@@ -9,6 +9,165 @@
 			"name": "POST /games/{{gameId}}/answers",
 			"item": [
 				{
+					"name": "Setup: Create Lobby",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"if (pm.response.code === 201) {",
+									"    const data = pm.response.json();",
+									"    pm.environment.set(\"gameId\", data.gameId);",
+									"    pm.environment.set(\"playerId\", data.playerId);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games?hostName=AnswerHost",
+							"host": ["{{base_url}}"],
+							"path": ["games"],
+							"query": [{"key": "hostName", "value": "AnswerHost"}]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setup: Join Player 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Player 2 joined\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const data = pm.response.json();",
+									"    pm.environment.set(\"playerId2\", data.playerId);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"name\": \"Player2\" }",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/join",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "join"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setup: Set Settings",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Settings accepted\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"Categories\": [\"Namn\", \"Land\", \"Stad\", \"Frukt\", \"Bilmodell\", \"Fotbollsspelare\"], \"Rounds\": 2 }",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/settings",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "settings"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit when game not started",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Round not active when game not started, ska ge 400\", function() {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId}}\",\n    \"answers\": {\n        \"Namn\": \"Vera\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setup: Start Game",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Game started\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/start?playerId={{playerId}}",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "start"],
+							"query": [{"key": "playerId", "value": "{{playerId}}"}]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Submit valid answers (non-last player)",
 					"event": [
 						{
@@ -46,6 +205,70 @@
 							"raw": "{{base_url}}/games/{{gameId}}/answers",
 							"host": ["{{base_url}}"],
 							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit duplicate answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should not allow overwriting existing answers\", function() {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId}}\",\n    \"answers\": {\n        \"Namn\": \"Vera\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit to non-existent game",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return 404 for non-existent game\", function() {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{playerId}}\",\n    \"answers\": {\n        \"Namn\": \"Vera\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/00000000-0000-0000-0000-000000000000/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "00000000-0000-0000-0000-000000000000", "answers"]
 						}
 					},
 					"response": []
@@ -93,97 +316,54 @@
 					"response": []
 				},
 				{
-					"name": "Submit to non-existent game",
+					"name": "Setup: Finish Round",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Should return 404 for non-existent game\", function() {",
-									"    pm.response.to.have.status(404);",
+									"pm.test(\"Round finished\", function() {",
+									"    pm.response.to.have.status(200);",
 									"});"
 								],
-								"type": "text/javascript",
-								"packages": {}
+								"type": "text/javascript"
 							}
 						}
 					],
 					"request": {
 						"method": "POST",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"playerId\": \"{{playerId}}\",\n    \"answers\": {\n        \"Namn\": \"Vera\"\n    }\n}",
-							"options": {"raw": {"language": "json"}}
-						},
 						"url": {
-							"raw": "{{base_url}}/games/00000000-0000-0000-0000-000000000000/answers",
+							"raw": "{{base_url}}/games/{{gameId}}/finish-round",
 							"host": ["{{base_url}}"],
-							"path": ["games", "00000000-0000-0000-0000-000000000000", "answers"]
+							"path": ["games", "{{gameId}}", "finish-round"]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Submit duplicate answers",
+					"name": "Setup: Start Round 2",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Should not allow overwriting existing answers\", function() {",
-									"    pm.response.to.have.status(400);",
+									"pm.test(\"Round 2 started\", function() {",
+									"    pm.response.to.have.status(200);",
 									"});"
 								],
-								"type": "text/javascript",
-								"packages": {}
+								"type": "text/javascript"
 							}
 						}
 					],
 					"request": {
 						"method": "POST",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"playerId\": \"{{playerId}}\",\n    \"answers\": {\n        \"Namn\": \"Vera\"\n    }\n}",
-							"options": {"raw": {"language": "json"}}
-						},
 						"url": {
-							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"raw": "{{base_url}}/games/{{gameId}}/start?playerId={{playerId}}",
 							"host": ["{{base_url}}"],
-							"path": ["games", "{{gameId}}", "answers"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Submit when game not started",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Round not active when game not started, ska ge 400\", function() {",
-									"    pm.response.to.have.status(400);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"playerId\": \"{{playerId}}\",\n    \"answers\": {\n        \"Namn\": \"Vera\"\n    }\n}",
-							"options": {"raw": {"language": "json"}}
-						},
-						"url": {
-							"raw": "{{base_url}}/games/{{gameId}}/answers",
-							"host": ["{{base_url}}"],
-							"path": ["games", "{{gameId}}", "answers"]
+							"path": ["games", "{{gameId}}", "start"],
+							"query": [{"key": "playerId", "value": "{{playerId}}"}]
 						}
 					},
 					"response": []
