@@ -4,6 +4,8 @@ dist
 dist-ssr
 *.local
 
+claude.md
+
 # .NET
 bin/
 obj/
@@ -14,3 +16,6 @@ obj/
 
 # Editor / OS
 .DS_Store
+
+# Claude Code
+.claude/

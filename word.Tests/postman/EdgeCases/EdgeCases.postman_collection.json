@@ -176,6 +176,21 @@
 					"name": "Test 02: Very long player name (1000 chars)",
 					"event": [
 						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest({",
+									"    url: pm.environment.get('base_url') + '/games?hostName=NameTestHost',",
+									"    method: 'POST'",
+									"}, function (err, res) {",
+									"    const data = res.json();",
+									"    pm.environment.set('nameTestGameId', data.gameId);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
 							"listen": "test",
 							"script": {
 								"exec": [
@@ -201,9 +216,9 @@
 							"options": {"raw": {"language": "json"}}
 						},
 						"url": {
-							"raw": "{{base_url}}/games/{{gameId}}/join",
+							"raw": "{{base_url}}/games/{{nameTestGameId}}/join",
 							"host": ["{{base_url}}"],
-							"path": ["games", "{{gameId}}", "join"]
+							"path": ["games", "{{nameTestGameId}}", "join"]
 						}
 					},
 					"response": []
@@ -232,10 +247,10 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/games?hostName=<script>alert(1)</script>",
+							"raw": "{{base_url}}/games?hostName=<script>",
 							"host": ["{{base_url}}"],
 							"path": ["games"],
-							"query": [{"key": "hostName", "value": "<script>alert(1)</script>"}]
+							"query": [{"key": "hostName", "value": "<script>"}]
 						}
 					},
 					"response": []
@@ -269,9 +284,9 @@
 							"options": {"raw": {"language": "json"}}
 						},
 						"url": {
-							"raw": "{{base_url}}/games/{{gameId}}/join",
+							"raw": "{{base_url}}/games/{{nameTestGameId}}/join",
 							"host": ["{{base_url}}"],
-							"path": ["games", "{{gameId}}", "join"]
+							"path": ["games", "{{nameTestGameId}}", "join"]
 						}
 					},
 					"response": []
@@ -337,9 +352,9 @@
 							"options": {"raw": {"language": "json"}}
 						},
 						"url": {
-							"raw": "{{base_url}}/games/{{gameId}}/join",
+							"raw": "{{base_url}}/games/{{nameTestGameId}}/join",
 							"host": ["{{base_url}}"],
-							"path": ["games", "{{gameId}}", "join"]
+							"path": ["games", "{{nameTestGameId}}", "join"]
 						}
 					},
 					"response": []
