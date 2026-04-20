@@ -17,6 +17,11 @@ public class CategoryService
                 cat => new HashSet<string>(cat.Value, StringComparer.OrdinalIgnoreCase)));
     }
 
+    public CategoryService(Dictionary<string, Dictionary<string, HashSet<string>>> data)
+    {
+        _data = data;
+    }
+
     public List<string> GetCategoryNames(string language)
     {
         if (!_data.TryGetValue(language, out var categories))

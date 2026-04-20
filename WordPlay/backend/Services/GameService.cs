@@ -7,16 +7,12 @@ namespace Brainfart.Services;
 public class GameService
 {
     private readonly ConcurrentDictionary<Guid, GameState> _games = new();
-    private static readonly Regex ValidName = new(@"^[a-zA-Z0-9 ]+$");
-
     private static string? ValidatePlayerName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            return "Playername is requiered";
+            return "Playername is required";
         if (name.Length > 20)
             return "Name must be 20 characters or less";
-        if (!ValidName.IsMatch(name))
-            return "Name can only contain letters, numbers, and spaces";
         return null;
     }
 
@@ -107,11 +103,14 @@ public class GameService
         var extraCategories = req.Answers.Keys.Except(state.Categories).ToList();
         if (extraCategories.Any())
             return (true, "Answers contain invalid categories", false);
-        var missingCategories = state.Categories.Except(req.Answers.Keys).ToList();
-        if (missingCategories.Any())
-            return (true, "All categories must be answered", false);
+        // Fill missing categories with empty strings (auto-submit may send partial answers)
+        foreach (var cat in state.Categories)
+        {
+            if (!req.Answers.ContainsKey(cat))
+                req.Answers[cat] = "";
+        }
         var badAnswers = req.Answers
-            .Where(a => !a.Value.StartsWith(state.CurrentLetter, StringComparison.OrdinalIgnoreCase))
+            .Where(a => !string.IsNullOrEmpty(a.Value) && !a.Value.StartsWith(state.CurrentLetter, StringComparison.OrdinalIgnoreCase))
             .Select(a => a.Key).ToList();
         if (badAnswers.Any())
             return (true, $"Answers must start with the letter {state.CurrentLetter}", false);

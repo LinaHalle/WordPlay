@@ -121,7 +121,7 @@ export default function GamePage() {
   };
 
   const restartGame = async () => {
-    await fetch(`/games/${gameId}/restart`, {
+    await fetch(`/games/${gameId}/start?playerId=${playerId}`, {
       method: "POST"
     });
     setAnswers({});

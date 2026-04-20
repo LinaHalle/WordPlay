@@ -92,6 +92,7 @@ public static class GameEndpoints
       return Results.Ok(new
       {
         state!.GameId,
+        HostId = state.Players.FirstOrDefault(p => p.Host)?.PlayerId,
         Status = state.Status.ToString(),
         state.Players,
         state.Categories,
