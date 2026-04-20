@@ -12,16 +12,20 @@ public class GameCreationTests
     var service = new GameService(); // Här skapar vi en ny "spelmotor" som är ett nytt tomt spel
     var categories = new List<string> { "Cities", "Animals" }; // Förbereder en lista med kategorier
 
-    var (gameId, playerId) = service.CreateGame("Alice", categories, 3); // Nu skapar vi ett spel med Alice, kategorier och antal rundor
+    var (gameId, playerId, createError) = service.CreateGame("Alice"); // Nu skapar vi ett spel med Alice
+    var (settingsFound, settingsError) = service.ChooseSettings(gameId, new ChooseSettingsRequest(categories, 3)); // Sätter kategorier och antal rundor separat
     var (found, state) = service.GetGameState(gameId); // Sedan frågar vi om ett spel har skapats med ID:t och sedan får vi ett svar ja/nej
 
+    Assert.Null(createError); // Inget fel ska uppstå vid skapandet
+    Assert.True(settingsFound); // Spelet ska hittas när inställningar sätts
+    Assert.Null(settingsError); // Inget fel ska uppstå när inställningar sätts
     Assert.True(found); // Finns spelet?
     Assert.NotNull(state); // Spelets info ska inte vara tomt/null
     Assert.Equal(gameId, state.GameId); // Spelets ID skall matcha det ID som skapades först
-    Assert.Equal(playerId, state.HostId); // Alice skall vara registrerad som host
     Assert.Equal(GameStatus.WaitingForPlayers, state.Status); // Nu går spelet i ett läge där vi väntar på fler spelare
     Assert.Equal(3, state.Rounds); // Antal rundor ska vara tre som vi angivit ovan
     Assert.Equal(categories, state.Categories); // Kategorier ska vara sparade exakt som vi valde
+    Assert.Contains(state.Players, p => p.PlayerId == playerId && p.Host); // Alice skall vara registrerad som host
   }
 
   [Fact]
@@ -29,13 +33,14 @@ public class GameCreationTests
   {
     var service = new GameService();
 
-    var (gameId, playerId) = service.CreateGame("Alice", new List<string> { "Cities" }, 2); // Skapar ett spel med Alice som host
+    var (gameId, playerId, error) = service.CreateGame("Alice"); // Skapar ett spel med Alice som host
     var (_, state) = service.GetGameState(gameId); // Hämtar spelets information, "_", i stället för found eftersom vi inte bryr oss om värdet i detta test
 
+    Assert.Null(error); // Skapandet ska lyckas
     Assert.NotNull(state); // Spelets information skall inte vara tomt/null
     Assert.Single(state.Players); // Kontrollerar att listan har exakt ett element (en spelare i form av Alice)
     Assert.Equal(playerId, state.Players[0].PlayerId); // Första spelarens ID skall matcha Alices ID
-    Assert.Equal("Alice", state.Players[0].UserName); // Första spelarens namn skall vara Alice
+    Assert.Equal("Alice", state.Players[0].Name); // Första spelarens namn skall vara Alice
   }
 
   [Fact]
@@ -43,7 +48,7 @@ public class GameCreationTests
   {
     var service = new GameService(); // Här skapar vi en ny "spelmotor" som är ett nytt tomt spel
 
-    var (gameId, _) = service.CreateGame("Alice", new List<string> { "Cities" }, 2); // Alice skapar ett spel och vi bryr oss enbart om gameId här, därav "_"
+    var (gameId, _, createError) = service.CreateGame("Alice"); // Alice skapar ett spel och vi bryr oss enbart om gameId här, därav "_"
     var (found, joinedPlayerId, error) = service.JoinGame(gameId, "Bob");
     // Nu ska Bob försöka gå med i Alice spel med hjälp av gameId
     // Vi ska få tillbaka:
@@ -52,24 +57,27 @@ public class GameCreationTests
     // 3. Error, ett felmeddelande om något gick fel (error)
     var (_, state) = service.GetGameState(gameId); // Hämta spelets nuvarande information så vi kan se om Bob är med
 
+    Assert.Null(createError); // Skapandet ska lyckas
     Assert.True(found); // Finns spelet?
     Assert.Null(error); // Inget fel ska ha uppstått (error = null = tomt)
     Assert.NotNull(joinedPlayerId); // Bob ska ha fått ett eget spelar-ID (inte null = tomt)
     Assert.NotNull(state); // Spelets info ska inte vara tomt
     Assert.Equal(2, state.Players.Count); // Nu ska det finnas två spelare i spelet
-    Assert.Contains(state.Players, p => p.PlayerId == joinedPlayerId && p.UserName == "Bob"); // En kontroll om Bob verkligen finns med i spelarlistan "hitta en spelare där både ID:t matchar Bobs ID och namnet är Bob
+    Assert.Contains(state.Players, p => p.PlayerId == joinedPlayerId && p.Name == "Bob"); // En kontroll om Bob verkligen finns med i spelarlistan "hitta en spelare där både ID:t matchar Bobs ID och namnet är Bob
   }
   [Fact]
   public void StartGame_StartsRoundAndSetsLetter() // Detta test kontrollerar att spelet startar korrekt efter att en andra spelare gått med
   {
     var service = new GameService();
 
-    var (gameId, _) = service.CreateGame("Alice", new List<string> { "Cities" }, 2); // Alice skapar spelet
+    var (gameId, hostId, createError) = service.CreateGame("Alice"); // Alice skapar spelet
+    service.ChooseSettings(gameId, new ChooseSettingsRequest(new List<string> { "Cities" }, 2)); // Sätter kategorier och rundor innan start
     service.JoinGame(gameId, "Bob"); // Bob går också med så det blir två spelare
 
-    var (found, letter, error) = service.StartGame(gameId); // Nu startar vi spelet
+    var (found, letter, error) = service.StartGame(gameId, hostId); // Nu startar vi spelet
     var (_, state) = service.GetGameState(gameId); // Hämtar state efter start
 
+    Assert.Null(createError); // Skapandet ska lyckas
     Assert.True(found); // Spelet ska finnas
     Assert.Null(error); // Inget fel ska uppstå
     Assert.NotNull(letter); // En bokstav ska ha genererats
@@ -86,11 +94,13 @@ public class GameCreationTests
   {
     var service = new GameService();
 
-    var (gameId, _) = service.CreateGame("Alice", new List<string> { "Cities" }, 2); // Alice skapar ett spel men ingen annan går med
+    var (gameId, hostId, createError) = service.CreateGame("Alice"); // Alice skapar ett spel men ingen annan går med
+    service.ChooseSettings(gameId, new ChooseSettingsRequest(new List<string> { "Cities" }, 2)); // Kategorier måste vara satta innan startförsöket
 
-    var (found, letter, error) = service.StartGame(gameId); // Vi försöker starta spelet trots att det bara finns en spelare
+    var (found, letter, error) = service.StartGame(gameId, hostId); // Vi försöker starta spelet trots att det bara finns en spelare
     var (_, state) = service.GetGameState(gameId); // Vi hämtar också spelets info för att kolla att ingenting förändrades
 
+    Assert.Null(createError); // Skapandet ska lyckas
     Assert.True(found); // Spelet hittades
     Assert.Equal("Need at least 2 players", error); // Felmeddelande om Alice vill starta spelet själv (en spelare)
     Assert.Null(letter); // Ingen bokstav ska ha genererats eftersom spelet aldrig startade
@@ -106,10 +116,11 @@ public class GameCreationTests
   {
     var service = new GameService();
 
-    var (gameId, hostId) = service.CreateGame("Alice", new List<string> { "Cities", "Animals" }, 2); // Alice skapar ett spel som host
+    var (gameId, hostId, createError) = service.CreateGame("Alice"); // Alice skapar ett spel som host
+    service.ChooseSettings(gameId, new ChooseSettingsRequest(new List<string> { "Cities", "Animals" }, 2)); // Sätter kategorier och rundor innan start
     var (_, joinedPlayerId, _) = service.JoinGame(gameId, "Bob"); // Bob ansluter
 
-    service.StartGame(gameId); // Spelet startar och det är dags för att svara
+    service.StartGame(gameId, hostId); // Spelet startar och det är dags för att svara
 
     var request = new SubmitAnswersRequest( // Här bygger vi ihop Alice svar med en request-modell där kategori är nyckel och svaret är värdet, därav dictionary
       hostId,
@@ -123,11 +134,12 @@ public class GameCreationTests
     var (found, error, roundFinished) = service.SubmitAnswers(gameId, request); // Alice svar skickas in och får tillbaka found, error och om rundan är avslutad
     var (_, state) = service.GetGameState(gameId); // Hämtar spelets nuvarande information för att se vad som sparats
 
+    Assert.Null(createError); // Skapandet ska lyckas
     Assert.True(found); // Spelet ska hittas
     Assert.Null(error); // Inget fel uppkommer
     Assert.False(roundFinished); // Rundan ska INTE vara avslutad eftersom Bob inte har skickat in sina svar än
     Assert.NotNull(state); // Spelets information skall inte vara tomt
-    Assert.Equal(GameStatus.InRound, state.Status); // Spelet ska vara in en aktiv runda
+    Assert.Equal(GameStatus.WaitingForAnswers, state.Status); // Spelet väntar nu på övriga spelares svar
     Assert.NotNull(state.Answers); // Samlingen av svar skall existera
     Assert.Single(state.Answers); // Det skall enbart finnas ett svar i samlingen, Alices svar
     Assert.Equal("Stockholm", state.Answers[hostId]["Cities"]); // Hennes svar på stad
