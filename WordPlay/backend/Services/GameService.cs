@@ -94,7 +94,7 @@ public class GameService
         return (true, state.CurrentLetter, null);
     }
 
-    public (bool found, string? error, bool roundFinished) SubmitAnswers(Guid gameId, SubmitAnswersRequest req)
+    public (bool found, string? error, bool roundFinished) SubmitAnswers(Guid gameId, SubmitAnswersRequest req, CategoryService categoryService)
     {
         if (!_games.TryGetValue(gameId, out var state))
             return (false, "Not found", false);
@@ -107,11 +107,22 @@ public class GameService
         var extraCategories = req.Answers.Keys.Except(state.Categories).ToList();
         if (extraCategories.Any())
             return (true, "Answers contain invalid categories", false);
+        var missingCategories = state.Categories.Except(req.Answers.Keys).ToList();
+        if (missingCategories.Any())
+            return (true, "All categories must be answered", false);
+        var badAnswers = req.Answers
+            .Where(a => !a.Value.StartsWith(state.CurrentLetter, StringComparison.OrdinalIgnoreCase))
+            .Select(a => a.Key).ToList();
+        if (badAnswers.Any())
+            return (true, $"Answers must start with the letter {state.CurrentLetter}", false);
         state.Answers[req.PlayerId] = req.Answers;
         state.Status = GameStatus.WaitingForAnswers;
         if (state.Answers.Count == state.Players.Count)
+        {
             state.Status = GameStatus.RoundFinished;
-        return (true, null, state.Status == GameStatus.RoundFinished);
+            FinishRound(gameId, categoryService);
+        }
+        return (true, null, state.Answers.Count == state.Players.Count);
     }
 
     public (bool found, RoundResult? result, string? error) FinishRound(Guid gameId, CategoryService categoryService)

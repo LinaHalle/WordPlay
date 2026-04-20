@@ -18,7 +18,7 @@ type Game = {
   players: Player[];
   currentLetter: string;
   scoreboard: Record<string, number>;
-  status: number;
+  status: string;
 };
 
 
@@ -33,6 +33,7 @@ export default function GamePage() {
   const navigate = useNavigate();
 
   const [answers, setAnswers] = useState<{ [key: string]: string; }>({});
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   
 
   // FETCH GAME (polling)
@@ -40,7 +41,7 @@ export default function GamePage() {
     if (!gameId) return;
 
     const fetchGame = async () => {
-      const res = await fetch(`http://localhost:5095/games/${gameId}`);
+      const res = await fetch(`/games/${gameId}`);
       const data = await res.json();
       setGame(data);
     };
@@ -52,10 +53,11 @@ export default function GamePage() {
   }, [gameId]);
 
   useEffect(() => {
-  if (game?.status !== 1) return;
+  if (game?.status !== "InRound") return;
 
   setCountdown(3);
   setShowLetter(false);
+  setHasSubmitted(false);
 
   const timer = setInterval(() => {
     setCountdown(prev => {
@@ -82,9 +84,18 @@ export default function GamePage() {
     }));
   };
 
+  // auto-submit when another player submits first
+  useEffect(() => {
+    if (game?.status === "WaitingForAnswers" && !hasSubmitted) {
+      submitAnswers();
+    }
+  }, [game?.status]);
+
   //submit answers
   const submitAnswers = async () => {
-    await fetch(`http://localhost:5095/games/${gameId}/answers`, {
+    if (hasSubmitted) return;
+    setHasSubmitted(true);
+    await fetch(`/games/${gameId}/answers`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -98,18 +109,19 @@ export default function GamePage() {
   };
   
   const nextRound = async () => {
-    await fetch(`http://localhost:5095/games/${gameId}/next-round`, {
+    await fetch(`/games/${gameId}/start?playerId=${playerId}`, {
     method: "POST"
     });
 
   // reset UI state för ny runda
   setAnswers({});
+  setHasSubmitted(false);
   setShowLetter(false);
   setCountdown(3);
   };
 
   const restartGame = async () => {
-    await fetch(`http://localhost:5095/games/${gameId}/restart`, {
+    await fetch(`/games/${gameId}/restart`, {
       method: "POST"
     });
     setAnswers({});
@@ -125,7 +137,7 @@ export default function GamePage() {
     return <p>Loading...</p>;
   }
 
-  if (game.status === 1) {
+  if (game.status === "InRound" || game.status === "WaitingForAnswers") {
     return (
       <div className="startpage">
         <h1 className="title">
@@ -147,7 +159,7 @@ export default function GamePage() {
                 <label>{cat}</label>
                 <input
                   className="game-input"
-                  disabled={game.status !==1}
+                  disabled={hasSubmitted}
                   value={answers[cat] || ""}
                   onChange={(e) => handleChange(cat, e.target.value)}
                 />
@@ -156,7 +168,9 @@ export default function GamePage() {
 
             <Button
               onClick={submitAnswers}
-              disabled={game.status !== 1}
+              disabled={hasSubmitted || !game.categories.every(cat =>
+                answers[cat]?.trim() && answers[cat].trim().toUpperCase().startsWith(letter?.toUpperCase() ?? "")
+              )}
             >
               DONE
             </Button>
@@ -166,7 +180,7 @@ export default function GamePage() {
     );
   }
 
-  if (game.status === 2) {
+  if (game.status === "ShowingLeaderboard") {
     console.log(game.scoreboard);
      const isHost = game.hostId === playerId;
 
@@ -209,7 +223,7 @@ export default function GamePage() {
     </div>
   );
   }
-  if (game.status === 3) {
+  if (game.status === "GameEnded") {
   const sorted = Object.entries(game.scoreboard || {})
     .sort((a, b) => b[1] - a[1]);
 

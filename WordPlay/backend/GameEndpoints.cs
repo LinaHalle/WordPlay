@@ -52,7 +52,7 @@ public static class GameEndpoints
 
     app.MapPost("/games/{gameId:guid}/answers", (Guid gameId, SubmitAnswersRequest req) =>
     {
-      var (found, error, roundFinished) = gameService.SubmitAnswers(gameId, req);
+      var (found, error, roundFinished) = gameService.SubmitAnswers(gameId, req, categoryService);
       if (!found) return Results.NotFound();
       if (error != null) return Results.BadRequest(error);
       var state = gameService.GetGameState(gameId).state;
