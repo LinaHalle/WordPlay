@@ -67,9 +67,6 @@ public class GameService
     if (!_games.TryGetValue(gameId, out var state))
       return (false, null, null, false);
 
-    if (!state.IsScored)
-      return (true, null, "Round not scored yet", false);
-
     state.CurrentRound++;
 
     if (state.CurrentRound >= state.Rounds)
@@ -132,6 +129,20 @@ public class GameService
     Console.WriteLine($"SCORING RUNNING - players: {state.Players.Count}");
     Console.WriteLine($"answers: {state.Answers.Count}");
     return (true, new RoundResult(state.Scoreboard), null);
+  }
+
+  public (bool found, string? error) RestartGame(Guid gameId)
+  {
+    if (!_games.TryGetValue(gameId, out var state))
+      return (false, null);
+
+    // reset men behåll spelare + categories + rounds
+    state.CurrentRound = 0;
+    state.Scoreboard = new Dictionary<Guid, int>();
+
+    StartRound(state);
+
+    return (true, null);
   }
 
   public (bool found, GameState? state) GetGameState(Guid gameId)

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import "../index.css";
@@ -29,6 +30,7 @@ export default function GamePage() {
   const [game, setGame] = useState<Game | null>(null);
   const [countdown, setCountdown] = useState(3);
   const [showLetter, setShowLetter] = useState(false);
+  const navigate = useNavigate();
 
   const [answers, setAnswers] = useState<{ [key: string]: string; }>({});
   
@@ -41,8 +43,6 @@ export default function GamePage() {
       const res = await fetch(`http://localhost:5095/games/${gameId}`);
       const data = await res.json();
       setGame(data);
-
-     
     };
 
     fetchGame();
@@ -95,6 +95,30 @@ export default function GamePage() {
       })
     });
 
+  };
+  
+  const nextRound = async () => {
+    await fetch(`http://localhost:5095/games/${gameId}/next-round`, {
+    method: "POST"
+    });
+
+  // reset UI state för ny runda
+  setAnswers({});
+  setShowLetter(false);
+  setCountdown(3);
+  };
+
+  const restartGame = async () => {
+    await fetch(`http://localhost:5095/games/${gameId}/restart`, {
+      method: "POST"
+    });
+    setAnswers({});
+    setCountdown(3);
+    setShowLetter(false);
+  };
+
+  const goToStart = () => {
+    navigate("/");
   };
 
   if (!game) {
@@ -175,10 +199,61 @@ export default function GamePage() {
           </ul>
 
           {isHost && (
-            <Button className="next-round-btn">
+            <Button className="next-round-btn"
+              onClick={nextRound}>
               Next Round
             </Button>
           )}
+        </Card>
+      </div>
+    </div>
+  );
+  }
+  if (game.status === 3) {
+  const sorted = Object.entries(game.scoreboard || {})
+    .sort((a, b) => b[1] - a[1]);
+
+  const winnerId = sorted[0]?.[0];
+  const winner = game.players.find(p => p.playerId === winnerId);
+
+  return (
+    <div className="startpage">
+      <h1 className="title">🎉 GAME FINISHED</h1>
+
+      <div className="lobby-wrapper">
+        <Card className="lobby-card">
+          <h2>🏆 Final Scores</h2>
+
+          <ul className="score-list">
+            {sorted.map(([id, score]) => {
+              const player = game.players.find(p => p.playerId === id);
+
+              return (
+                <li key={id} className="score-row">
+                  <span className="player-name">
+                    <strong>{player?.userName ?? "Unknown"}</strong>
+                  </span>
+
+                  <span className="player-score">
+                    {score} pts
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+
+          <h2 className="winner-text">
+            🥇 Winner: <strong>{winner?.userName}</strong>
+          </h2>
+          {game.hostId === playerId && (
+            <Button onClick={restartGame}>
+              New Game
+            </Button>
+          )}
+
+          <Button onClick={goToStart}>
+            Start Menu
+          </Button>
         </Card>
       </div>
     </div>
