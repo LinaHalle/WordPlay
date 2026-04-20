@@ -1,9 +1,8 @@
 import type { Host } from "../InterFace/CreateGame";
 
-const API_URL = "https://brainfart.onrender.com";
 
 export async function hostGame(data: Host) {
-  const response = await fetch(`${API_URL}/games`, {
+  const response = await fetch(`/games`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)

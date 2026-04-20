@@ -36,7 +36,7 @@ export default function LobbyPage() {
       try {
         console.log("FETCHING GAME:", gameId);
 
-        const res = await fetch(`http://localhost:5095/games/${gameId}`);
+        const res = await fetch(`/games/${gameId}`);
         const data = await res.json();
 
         console.log("BACKEND DATA:", {
@@ -92,7 +92,7 @@ export default function LobbyPage() {
           disabled={!username}
           onClick={async () => {
             const res = await fetch(
-              `http://localhost:5095/games/${game.gameId}/join`,
+              `/games/${game.gameId}/join`,
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -108,7 +108,7 @@ export default function LobbyPage() {
 
 
             // hämta uppdaterad game state direkt
-            const refreshed = await fetch(`http://localhost:5095/games/${game.gameId}`);
+            const refreshed = await fetch(`/games/${game.gameId}`);
             const updated = await refreshed.json();
 
             setGame(updated);
@@ -185,7 +185,7 @@ export default function LobbyPage() {
             <Button
               onClick={async () => {
                 const res = await fetch(
-                  `http://localhost:5095/games/${game.gameId}/start`,
+                  `/games/${game.gameId}/start`,
                   { method: "POST" }
                 );
 
