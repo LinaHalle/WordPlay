@@ -1,4 +1,5 @@
 namespace Brainfart.Tests;
 
-public class
-
+public class PlaceholderTest
+{
+}

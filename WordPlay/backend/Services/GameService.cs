@@ -56,6 +56,7 @@ public class GameService
         state.Categories = req.Categories;
         state.Rounds = req.Rounds;
         state.RoundsLeft = req.Rounds;
+        state.Language = req.Language;
         return (true, null);
 
     }
@@ -113,13 +114,13 @@ public class GameService
         return (true, null, state.Status == GameStatus.RoundFinished);
     }
 
-    public (bool found, RoundResult? result, string? error) FinishRound(Guid gameId)
+    public (bool found, RoundResult? result, string? error) FinishRound(Guid gameId, CategoryService categoryService)
     {
         if (!_games.TryGetValue(gameId, out var state))
             return (false, null, null);
         if (state.Status != GameStatus.RoundFinished)
             return (true, null, "Round not finished yet");
-        var roundResult = Scoring.Calculate(state);
+        var roundResult = Scoring.Calculate(state, categoryService);
         state.Scoreboard = roundResult.Scoreboard;
         state.DecrementRoundsLeft();
         if (state.GetRoundsLeft() > 0)

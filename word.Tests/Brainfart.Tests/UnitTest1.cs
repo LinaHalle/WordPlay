@@ -1,9 +1,11 @@
-﻿namespace Brainfart.Tests;
+﻿using Brainfart.Services;
+
+namespace Brainfart.Tests;
 
 public class CreateGameTest
 {
     [Fact]
-    public void CreateGameTest()
+    public void CreateGame_ReturnsGameIdAndPlayerId()
     {
         //arrange
         GameService service = new GameService();

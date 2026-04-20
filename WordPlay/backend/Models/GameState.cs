@@ -7,6 +7,7 @@ public class GameState
     public List<Player> Players { get; set; } = new();
     public List<string> Categories { get; set; } = new();
     public string CurrentLetter { get; set; } = "";
+    public string Language { get; set; } = "en";
     public Dictionary<Guid, Dictionary<string, string>> Answers { get; set; } = new();
     public Dictionary<Guid, int> Scoreboard { get; set; } = new();
     public int Rounds { get; set; } = 1;

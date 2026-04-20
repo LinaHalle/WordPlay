@@ -4,7 +4,7 @@ namespace Brainfart.Services;
 
 public static class Scoring
 {
-  public static RoundResult Calculate(GameState state)
+  public static RoundResult Calculate(GameState state, CategoryService categoryService)
   {
     var scores = state.Scoreboard != null
      ? new Dictionary<Guid, int>(state.Scoreboard)
@@ -23,7 +23,9 @@ public static class Scoring
          x =>
          {
            var svar = x.Value.GetValueOrDefault(category, "");
-           return svar.StartsWith(state.CurrentLetter, StringComparison.OrdinalIgnoreCase) ? svar : "";
+           return svar.StartsWith(state.CurrentLetter, StringComparison.OrdinalIgnoreCase)
+               && categoryService.IsValidAnswer(state.Language, category, svar)
+               ? svar : "";
          });
 
 

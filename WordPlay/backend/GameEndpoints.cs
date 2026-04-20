@@ -5,8 +5,15 @@ namespace Brainfart;
 
 public static class GameEndpoints
 {
-  public static void MapGameEndpoints(this WebApplication app, GameService gameService)
+  public static void MapGameEndpoints(this WebApplication app, GameService gameService, CategoryService categoryService)
   {
+
+    app.MapGet("/categories/{language}", (string language) =>
+    {
+      var names = categoryService.GetCategoryNames(language);
+      if (names.Count == 0) return Results.NotFound();
+      return Results.Ok(names);
+    });
 
     app.MapPost("/games", (string hostName) =>
     {
@@ -63,7 +70,7 @@ public static class GameEndpoints
 
     app.MapPost("/games/{gameId:guid}/finish-round", (Guid gameId) =>
     {
-      var (found, result, error) = gameService.FinishRound(gameId);
+      var (found, result, error) = gameService.FinishRound(gameId, categoryService);
       if (!found) return Results.NotFound();
       if (error != null) return Results.BadRequest(error);
       return Results.Ok(result);
@@ -92,7 +99,8 @@ public static class GameEndpoints
         state.Answers,
         state.Scoreboard,
         state.Rounds,
-        state.RoundsLeft
+        state.RoundsLeft,
+        state.Language
       });
     });
   }

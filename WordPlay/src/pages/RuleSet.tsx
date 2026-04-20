@@ -5,18 +5,58 @@ import { hostGame, setGameSettings } from "../services/CreateGame";
 
 import "../index.css";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function RuleSet() {
   const navigate = useNavigate();
   const [rounds, setRounds] = useState<number | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
+  const [language, setLanguage] = useState<string>("en");
+  const [availableCategories, setAvailableCategories] = useState<string[]>([]);
+
+  const fallbackCategories: Record<string, string[]> = {
+    en: ["Animals", "Fruit", "Sports", "Name", "Country", "City", "CarBrand", "Movies"],
+    se: ["Djur", "Frukt", "Sport", "Namn", "Land", "Stad", "Bilmärke", "Filmer"],
+  };
+
+  useEffect(() => {
+    fetch(`/categories/${language}`)
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch");
+        return res.json();
+      })
+      .then(data => {
+        setAvailableCategories(data);
+        setCategories([]);
+      })
+      .catch(() => {
+        setAvailableCategories(fallbackCategories[language] || fallbackCategories.en);
+        setCategories([]);
+      });
+  }, [language]);
 
   return (
     <div className="page-center">
   <h1 className="title" >Ruleset</h1>
 
   <div className="cards-container">
+    <div className="card-section">
+      <p>Language:</p>
+      <Card className="long-card">
+        {[{ code: "en", label: "English" }, { code: "se", label: "Svenska" }].map(lang => (
+          <label className="option" key={lang.code}>
+            <span>{lang.label}</span>
+            <input
+              type="radio"
+              name="language"
+              checked={language === lang.code}
+              onChange={() => setLanguage(lang.code)}
+            />
+          </label>
+        ))}
+      </Card>
+    </div>
+
     <div className="card-section">
       <p>Number of rounds:</p>
 
@@ -39,7 +79,7 @@ export default function RuleSet() {
       <p>Choose categories:</p>
 
       <Card className="long-card">
-  {["Animals", "Fruit", "Sports", "Name", "Country", "City", "CarBrand", "Movies"].map(cat => (
+  {availableCategories.map(cat => (
     <label className="option" key={cat}>
       <span>{cat}</span>
       <input
@@ -84,7 +124,7 @@ export default function RuleSet() {
               hostName: host.username,
             });
 
-            await setGameSettings(result.gameId, categories, rounds);
+            await setGameSettings(result.gameId, categories, rounds, language);
 
           localStorage.setItem("gameId", result.gameId);
           localStorage.setItem("playerId", result.playerId);
