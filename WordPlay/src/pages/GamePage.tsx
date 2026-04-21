@@ -189,7 +189,7 @@ export default function GamePage() {
                 <label>{cat}</label>
                 <input
                   className="game-input"
-                  disabled={hasSubmitted || game.status === "WaitingForAnswers"}
+                  disabled={hasSubmitted || game.status === "RoundFinished"}
                   value={answers[cat] || ""}
                   onChange={(e) => handleChange(cat, e.target.value)}
                 />
