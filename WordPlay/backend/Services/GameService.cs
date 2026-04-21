@@ -7,12 +7,16 @@ namespace Brainfart.Services;
 public class GameService
 {
     private readonly ConcurrentDictionary<Guid, GameState> _games = new();
+    private static readonly Regex ValidName = new(@"^[a-zA-Z0-9 ]+$");
+
     private static string? ValidatePlayerName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return "Playername is required";
         if (name.Length > 20)
             return "Name must be 20 characters or less";
+        if (!ValidName.IsMatch(name))
+            return "Name can only contain letters, numbers, and spaces";
         return null;
     }
 
@@ -109,19 +113,11 @@ public class GameService
             if (!req.Answers.ContainsKey(cat))
                 req.Answers[cat] = "";
         }
-        var badAnswers = req.Answers
-            .Where(a => !string.IsNullOrEmpty(a.Value) && !a.Value.StartsWith(state.CurrentLetter, StringComparison.OrdinalIgnoreCase))
-            .Select(a => a.Key).ToList();
-        if (badAnswers.Any())
-            return (true, $"Answers must start with the letter {state.CurrentLetter}", false);
         state.Answers[req.PlayerId] = req.Answers;
         state.Status = GameStatus.WaitingForAnswers;
         if (state.Answers.Count == state.Players.Count)
-        {
             state.Status = GameStatus.RoundFinished;
-            FinishRound(gameId, categoryService);
-        }
-        return (true, null, state.Answers.Count == state.Players.Count);
+        return (true, null, state.Status == GameStatus.RoundFinished);
     }
 
     public (bool found, RoundResult? result, string? error) FinishRound(Guid gameId, CategoryService categoryService)
