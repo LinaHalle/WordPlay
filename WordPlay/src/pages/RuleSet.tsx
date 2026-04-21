@@ -1,7 +1,7 @@
 import Card from "../components/Card";
 import Button from "../components/Button";
 
-import { hostGame, setGameSettings } from "../services/CreateGame";
+import { setGameSettings } from "../services/CreateGame";
 
 import "../index.css";
 import { useNavigate } from "react-router-dom";
@@ -102,17 +102,9 @@ export default function RuleSet() {
         className="body-btn"
         disabled={!rounds || categories.length < 3}
         onClick={async () => {
-          console.log("clicked create game");
-          const stored = localStorage.getItem("currentPlayer");
+          const gameId = localStorage.getItem("gameId");
 
-          if (!stored) {
-            navigate("/");
-            return;
-          }
-
-          const host = JSON.parse(stored);
-
-          if (!host) {
+          if (!gameId) {
             navigate("/");
             return;
           }
@@ -120,20 +112,12 @@ export default function RuleSet() {
           if (!rounds) return;
 
           try {
-            const result = await hostGame({
-              hostName: host.username,
-            });
-
-            await setGameSettings(result.gameId, categories, rounds, language);
-
-          localStorage.setItem("gameId", result.gameId);
-          localStorage.setItem("playerId", result.playerId);
-
-          navigate(`/lobby/${result.gameId}`);
-        } catch (err) {
-          console.error(err);
-        }
-      }}
+            await setGameSettings(gameId, categories, rounds, language);
+            navigate(`/lobby/${gameId}`);
+          } catch (err) {
+            console.error(err);
+          }
+        }}
       >
         Create Game
       </Button>

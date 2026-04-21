@@ -25,16 +25,15 @@ export default function StartPage() {
         <Button
           className="HostButton"
           disabled={!username}
-          onClick={() => {
-            const playerId = crypto.randomUUID();
-
-            const player = {
-              username,
-              playerId,
-              isHost: true
-            };
-            localStorage.setItem("currentPlayer", JSON.stringify(player));
-            navigate("/ruleSet");
+          onClick={async () => {
+            try {
+              const result = await hostGame({ hostName: username });
+              localStorage.setItem("gameId", result.gameId);
+              localStorage.setItem("playerId", result.playerId);
+              navigate("/ruleSet");
+            } catch (err) {
+              console.error(err);
+            }
           }}
         >
           HOST GAME
