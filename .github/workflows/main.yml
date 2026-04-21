@@ -61,7 +61,8 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Test backend
-        run: dotnet test --no-build
+        working-directory: .
+        run: dotnet test word.Tests/Brainfart.Tests/
 
 
   playwright:
@@ -107,7 +108,9 @@ jobs:
 
       - name: Start backend
         working-directory: ./WordPlay/backend
-        run: dotnet run --urls "http://localhost:5095" &
+        run: dotnet run &
+        env:
+          PORT: "5095"
 
       - name: Wait for backend to be ready
         run: |

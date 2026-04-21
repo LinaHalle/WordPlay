@@ -44,11 +44,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"hostName\": \"Username\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
 						"url": {
-							"raw": "{{base_url}}/games?hostName=Username",
+							"raw": "{{base_url}}/games",
 							"host": ["{{base_url}}"],
-							"path": ["games"],
-							"query": [{"key": "hostName", "value": "Username"}]
+							"path": ["games"]
 						}
 					},
 					"response": []
@@ -72,11 +76,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"hostName\": \"\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
 						"url": {
-							"raw": "{{base_url}}/games?hostName=",
+							"raw": "{{base_url}}/games",
 							"host": ["{{base_url}}"],
-							"path": ["games"],
-							"query": [{"key": "hostName", "value": ""}]
+							"path": ["games"]
 						}
 					},
 					"response": []
@@ -100,11 +108,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"hostName\": \"   \"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
 						"url": {
-							"raw": "{{base_url}}/games?hostName=%20%20%20",
+							"raw": "{{base_url}}/games",
 							"host": ["{{base_url}}"],
-							"path": ["games"],
-							"query": [{"key": "hostName", "value": "   "}]
+							"path": ["games"]
 						}
 					},
 					"response": []
