@@ -147,4 +147,21 @@ public class GameCreationTests
     Assert.NotNull(joinedPlayerId); // Bob ska ha fått ett giltigt spelar-ID
     Assert.False(state.Answers.ContainsKey(joinedPlayerId.Value)); // Bobs ID skall inte existera i samlingen av svar då han inte svarat än. ".Value" används för att komma åt värdet inut i Guid 
   }
+
+  [Theory] // Fungerar som [Fact], dock smartare där vi testar olika värden, flera gånger på ett och samma test
+
+  [InlineData("")] // Testar ett tomt namn
+  [InlineData("   ")] // Testar ett namn med enbart mellanslag
+  [InlineData("ThisNameIsWayTooLong123")] // Testar ett namn som är för långt
+  [InlineData("Alice!")] // Testar ett namn som innehåller otillåtna tecken
+  public void CreateGame_InvalidHostName_ReturnsError(string hostName) // "string hostName" tar emot ett InlineData-värde i taget 
+  {
+    var service = new GameService(); // Försöker skapa en ny "spelmotor" med ogiltigt namn
+
+    var (_, _, error) = service.CreateGame(hostName); // Vi vill enbart ha en output på error
+
+    Assert.NotNull(error);
+    // Testet förväntar sig att error INTE är null. Ett felmeddelande skall returneras
+    // Om GameService accepterar ett ogiltigt namn utan att klaga så misslyckas testet
+  }
 }
