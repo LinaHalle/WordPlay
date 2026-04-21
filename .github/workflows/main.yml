@@ -108,7 +108,7 @@ jobs:
 
       - name: Start backend
         working-directory: ./WordPlay/backend
-        run: dotnet run --urls "http://localhost:5095" &
+        run: nohup dotnet run --urls "http://localhost:5095" > backend.log 2>&1 &
 
       - name: Wait for backend to be ready
         run: |
