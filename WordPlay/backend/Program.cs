@@ -4,6 +4,7 @@ using Brainfart.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 var gameService = new GameService();
+var categoryService = new CategoryService();
 
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
@@ -36,7 +37,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGameEndpoints(gameService);
+app.MapGameEndpoints(gameService, categoryService);
 
 app.Run();
 
