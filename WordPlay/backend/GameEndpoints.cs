@@ -15,12 +15,20 @@ public static class GameEndpoints
       return Results.Ok(names);
     });
 
-    app.MapPost("/games", (string hostName) =>
+    app.MapPost("/games", (CreateGameRequest req) =>
     {
-      var (gameId, playerId, error) = gameService.CreateGame(hostName);
+      var (gameId, playerId, error) = gameService.CreateGame(req.HostName);
+
       if (error != null) return Results.BadRequest(error);
+
       var state = gameService.GetGameState(gameId).state;
-      return Results.Created($"/games/{gameId}", new { gameId, playerId, status = state?.Status.ToString() });
+
+      return Results.Created($"/games/{gameId}", new
+      {
+        gameId,
+        playerId,
+        status = state?.Status.ToString()
+      });
     });
 
     app.MapPost("/games/{gameId:guid}/settings", (Guid gameId, ChooseSettingsRequest req) =>
