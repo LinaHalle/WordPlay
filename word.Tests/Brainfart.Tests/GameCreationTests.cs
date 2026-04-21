@@ -131,7 +131,8 @@ public class GameCreationTests
       }
     );
 
-    var (found, error, roundFinished) = service.SubmitAnswers(gameId, request, new CategoryService()); // Alice svar skickas in och får tillbaka found, error och om rundan är avslutad
+    var categoryService = new CategoryService(new Dictionary<string, Dictionary<string, HashSet<string>>>()); // Tom CategoryService för testet
+    var (found, error, roundFinished) = service.SubmitAnswers(gameId, request, categoryService); // Alice svar skickas in och får tillbaka found, error och om rundan är avslutad
     var (_, state) = service.GetGameState(gameId); // Hämtar spelets nuvarande information för att se vad som sparats
 
     Assert.Null(createError); // Skapandet ska lyckas

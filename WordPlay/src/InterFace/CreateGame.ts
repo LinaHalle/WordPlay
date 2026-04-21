@@ -1,3 +1,3 @@
-export type Host ={
-    hostName: string;
+export type Host = {
+  hostName: string;
 };

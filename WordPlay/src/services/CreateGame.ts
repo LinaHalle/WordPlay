@@ -1,8 +1,10 @@
 import type { Host } from "../InterFace/CreateGame";
 
 export async function hostGame(host: Host): Promise<{ gameId: string; playerId: string }> {
-    const response = await fetch(`/games?hostName=${encodeURIComponent(host.hostName)}`, {
+    const response = await fetch(`/games`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ hostName: host.hostName }),
     });
     if (!response.ok){
         throw new Error(`Failed to create game: ${response.statusText}`)

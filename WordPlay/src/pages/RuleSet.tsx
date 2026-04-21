@@ -1,7 +1,7 @@
 import Card from "../components/Card";
 import Button from "../components/Button";
 
-import { hostGame, setGameSettings } from "../services/CreateGame";
+import { hostGame, setGameSettings} from "../services/CreateGame";
 
 import "../index.css";
 import { useNavigate } from "react-router-dom";
@@ -121,7 +121,7 @@ export default function RuleSet() {
 
           try {
             const result = await hostGame({
-              hostName: host.username,
+              hostName: host.username
             });
 
             await setGameSettings(result.gameId, categories, rounds, language);

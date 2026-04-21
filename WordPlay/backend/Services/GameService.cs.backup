@@ -88,7 +88,8 @@ public class GameService
         var player = state.Players.Find(p => p.PlayerId == playerId);
         if (player == null || !player.Host)
             return (true, null, "Only Host can start the game");
-        state.Status = GameStatus.InRound;
+        state.Status = GameStatus.RoundFinished;
+        return (true, null, true);
         state.CurrentLetter = LetterGenerator.RandomLetter();
         state.Answers = new Dictionary<Guid, Dictionary<string, string>>();
         return (true, state.CurrentLetter, null);
@@ -114,20 +115,8 @@ public class GameService
                 req.Answers[cat] = "";
         }
         state.Answers[req.PlayerId] = req.Answers;
-
-        // First player to submit triggers WaitingForAnswers state
-        if (state.Status == GameStatus.InRound)
-            state.Status = GameStatus.WaitingForAnswers;
-
-        // Check if all players have submitted
-        bool allSubmitted = state.Players.Count == state.Answers.Count;
-        if (allSubmitted)
-            state.Status = GameStatus.RoundFinished;
-
-        return (true, null, allSubmitted);
-    }
-
-    public (bool found, RoundResult? roundResult, string? error) FinishRound(Guid gameId, CategoryService categoryService)
+        state.Status = GameStatus.RoundFinished;
+        return (true, null, true);
     {
         if (!_games.TryGetValue(gameId, out var state))
             return (false, null, null);
@@ -137,9 +126,11 @@ public class GameService
         state.Scoreboard = roundResult.Scoreboard;
         state.DecrementRoundsLeft();
         if (state.GetRoundsLeft() > 0)
-            state.Status = GameStatus.ShowingLeaderboard;
-        else
-            state.Status = GameStatus.GameEnded;
+            state.Status = GameStatus.RoundFinished;
+        return (true, null, true);
+        if (state.GetRoundsLeft() == 0)
+            state.Status = GameStatus.RoundFinished;
+        return (true, null, true);
         return (true, roundResult, null);
     }
 
