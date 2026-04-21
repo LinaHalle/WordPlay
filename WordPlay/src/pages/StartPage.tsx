@@ -44,7 +44,10 @@ export default function StartPage() {
           placeholder="PASTE LINK"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              navigate("/lobby");
+              const val = (e.target as HTMLInputElement).value;
+              // Extracts the ID from a link like ".../lobby/abc-123" or just "abc-123"
+              const gameId = val.split("/").pop();
+              if (gameId) navigate(`/lobby/${gameId}`);
             }
           }}
         />

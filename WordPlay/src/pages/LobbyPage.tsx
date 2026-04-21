@@ -39,30 +39,20 @@ export default function LobbyPage() {
         console.log("FETCHING GAME:", gameId);
 
         const res = await fetch(`/games/${gameId}`);
+        if (!res.ok) throw new Error("Game not found");
         const data = await res.json();
-
-        console.log("BACKEND DATA:", {
-          gameId: data.gameId,
-          players: data.players.length,
-          hostId: data.hostId,
-          status: data.status
-        });
 
         if (!isActive) return;
 
-      setGame(data);
+        setGame(data);
 
-       if (
-        data.status === "InRound" &&
-        window.location.pathname !== `/game/${data.gameId}`
-      ) {
-        navigate(`/game/${data.gameId}`);
+        if (data.status === "InRound") {
+          navigate(`/game/${data.gameId}`);
+        }
+      } catch (err) {
+        console.error("FETCH ERROR:", err);
       }
-
-    } catch (err) {
-      console.error("FETCH ERROR:", err);
-    }
-  };
+    };
 
     // direkt första fetch
     fetchGame();
