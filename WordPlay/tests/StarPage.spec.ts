@@ -8,8 +8,15 @@ test('has title', async ({ page }) => {
 });
 
 test('Host game with username', async ({ page }) => {
-  await page.goto('localhost:5173');
+  await page.route('**/games?*', route =>
+    route.fulfill({
+      status: 201,
+      contentType: 'application/json',
+      body: JSON.stringify({ gameId: 'test-game-id', playerId: 'test-player-id' }),
+    })
+  );
 
+  await page.goto('localhost:5173');
 
   await page.locator(".input").fill("Peter");
   await page.locator(".HostButton").click();
@@ -18,12 +25,20 @@ test('Host game with username', async ({ page }) => {
 
 test('No username Host game', async ({ page }) => {
     await page.goto('localhost:5173');
-  
+
     await page.locator(".input").fill("");
     await expect(page.locator(".HostButton")).toBeDisabled();
 });
-    
+
 test('host game navigates to ruleSet', async ({ page }) => {
+  await page.route('**/games?*', route =>
+    route.fulfill({
+      status: 201,
+      contentType: 'application/json',
+      body: JSON.stringify({ gameId: 'test-game-id', playerId: 'test-player-id' }),
+    })
+  );
+
   await page.goto('http://localhost:5173');
 
   await page.locator(".input").fill("Peter");
