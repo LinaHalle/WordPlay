@@ -148,15 +148,6 @@ export default function GamePage() {
     });
   };
 
-  const restartGame = async () => {
-    await fetch(`/games/${gameId}/start?playerId=${playerId}`, {
-      method: "POST"
-    });
-    setAnswers({});
-    setCountdown(3);
-    setShowLetter(false);
-  };
-
   const goToStart = () => {
     navigate("/");
   };
@@ -302,11 +293,7 @@ export default function GamePage() {
           <h2 className="winner-text">
             🥇 Winner: <strong>{winner?.userName}</strong>
           </h2>
-          {game.hostId === playerId && (
-            <Button onClick={restartGame}>
-              New Game
-            </Button>
-          )}
+          {game.hostId === playerId}
 
           <Button onClick={goToStart}>
             Start Menu
