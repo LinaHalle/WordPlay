@@ -1,7 +1,7 @@
 import type { Host } from "../InterFace/CreateGame";
 
 export async function hostGame(host: Host): Promise<{ gameId: string; playerId: string }> {
-    const response = await fetch(`/games?hostName=${encodeURIComponent(host.hostName)}`, {
+    const response = await fetch(`/games?hostName=${encodeURIComponent(host.hostName)}/settings`, {
         method: "POST",
     });
     if (!response.ok){
