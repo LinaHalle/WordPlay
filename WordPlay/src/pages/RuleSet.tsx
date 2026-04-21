@@ -1,7 +1,7 @@
 import Card from "../components/Card";
 import Button from "../components/Button";
 
-import { hostGame } from "../services/CreateGame";
+import { hostGame, setGameSettings} from "../services/CreateGame";
 
 import "../index.css";
 import { useNavigate } from "react-router-dom";
