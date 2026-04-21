@@ -55,7 +55,8 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Test backend
-        run: dotnet test --no-build
+        working-directory: .
+        run: dotnet test word.Tests/Brainfart.Tests/
 
 
   playwright:
@@ -86,7 +87,7 @@ jobs:
 
   api-tests:
     runs-on: ubuntu-latest
-    needs: build
+    needs: backend
 
     steps:
       - uses: actions/checkout@v4
