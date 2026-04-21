@@ -279,7 +279,7 @@ export default function GamePage() {
               return (
                 <li key={id} className="score-row">
                   <span className="player-name">
-                    <strong>{player?.userName ?? "Unknown"}</strong>
+                    <strong>{player?.userName ?? "Unknown"}</strong>{" "}
                   </span>
 
                   <span className="player-score">
