@@ -17,7 +17,7 @@ test('Lobby page pressing start no players.', async ({ page }) => {
     await page.locator(".body-btn").click();
 
 
-    //btn test
-    await page.goto('localhost:5173/lobby/:gameId');
-    await page.locator("Button").click(), expect(page.getByText("Need at least 2 players")).toBeVisible();
+    //btn test    
+    await page.getByRole('button', { name: 'start'}).click();
+    expect(page.getByText( 'Need at least 2 players')).toBeVisible();
 });

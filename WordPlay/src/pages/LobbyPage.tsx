@@ -193,6 +193,7 @@ export default function LobbyPage() {
 
           {isHost && (
             <Button
+            className="start"
               onClick={async () => {
                 if (game.players.length < 2) {
                   console.log(alert("Need at least 2 players"));
