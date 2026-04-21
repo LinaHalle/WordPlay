@@ -130,6 +130,9 @@ export default function RuleSet() {
 
           localStorage.setItem("gameId", result.gameId);
           localStorage.setItem("playerId", result.playerId);
+          localStorage.setItem("rounds", rounds.toString());
+          localStorage.setItem("categories", JSON.stringify(categories));
+          localStorage.setItem("language", language);
 
           navigate(`/lobby/${result.gameId}`);
         } catch (err) {
