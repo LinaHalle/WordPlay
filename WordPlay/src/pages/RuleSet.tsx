@@ -126,11 +126,7 @@ export default function RuleSet() {
               categories,
             });
 
-<<<<<<< HEAD
-            //await setGameSettings(result.gameId, categories, rounds);
-=======
             await setGameSettings(result.gameId, categories, rounds, language);
->>>>>>> main
 
           localStorage.setItem("gameId", result.gameId);
           localStorage.setItem("playerId", result.playerId);
