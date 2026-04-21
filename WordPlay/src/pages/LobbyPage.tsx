@@ -3,10 +3,12 @@ import "../index.css";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function LobbyPage() {
   const { gameId } = useParams();
   const [username, setUsername] = useState("");
+  const navigate = useNavigate();
 
   const [game, setGame] = useState<null | {
     gameId: string;
@@ -48,11 +50,19 @@ export default function LobbyPage() {
 
         if (!isActive) return;
 
-        setGame(data);
-      } catch (err) {
-        console.error("FETCH ERROR:", err);
+      setGame(data);
+
+       if (
+        data.status === "InRound" &&
+        window.location.pathname !== `/game/${data.gameId}`
+      ) {
+        navigate(`/game/${data.gameId}`);
       }
-    };
+
+    } catch (err) {
+      console.error("FETCH ERROR:", err);
+    }
+  };
 
     // direkt första fetch
     fetchGame();
@@ -164,7 +174,7 @@ export default function LobbyPage() {
               const link = `${window.location.origin}/lobby/${game.gameId}`;
               navigator.clipboard.writeText(link);
             }}
-          >
+            >
             Copy invite link
           </Button>
 
@@ -185,7 +195,11 @@ export default function LobbyPage() {
             <Button
               onClick={async () => {
                 const res = await fetch(
+<<<<<<< HEAD
                   `/games/${game.gameId}/start`,
+=======
+                  `/games/${game.gameId}/start?playerId=${playerId}`,
+>>>>>>> main
                   { method: "POST" }
                 );
 
@@ -203,7 +217,7 @@ export default function LobbyPage() {
 }
 
 LobbyPage.route = {
-  path: "/lobby",
+  path: '/lobby/:gameId',
   menuLabel: "LobbyPage",
   index: 3
 };

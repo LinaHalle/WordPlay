@@ -8,9 +8,13 @@ export async function hostGame(data: Host) {
     body: JSON.stringify(data)
   });
 
-  if (!response.ok) {
-    throw new Error(`Failed to create game: ${response.statusText}`);
-  }
-
-  return response.json();
+export async function setGameSettings(gameId: string, categories: string[], rounds: number, language: string = "en"): Promise<void> {
+    const response = await fetch(`/games/${gameId}/settings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ categories, rounds, language }),
+    });
+    if (!response.ok) {
+        throw new Error(`Failed to set game settings: ${response.statusText}`);
+    }
 }
