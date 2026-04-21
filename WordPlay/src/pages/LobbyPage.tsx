@@ -195,11 +195,7 @@ export default function LobbyPage() {
             <Button
               onClick={async () => {
                 const res = await fetch(
-<<<<<<< HEAD
-                  `/games/${game.gameId}/start`,
-=======
                   `/games/${game.gameId}/start?playerId=${playerId}`,
->>>>>>> main
                   { method: "POST" }
                 );
 
