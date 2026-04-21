@@ -40,7 +40,7 @@ public class GameCreationTests
     Assert.NotNull(state); // Spelets information skall inte vara tomt/null
     Assert.Single(state.Players); // Kontrollerar att listan har exakt ett element (en spelare i form av Alice)
     Assert.Equal(playerId, state.Players[0].PlayerId); // Första spelarens ID skall matcha Alices ID
-    Assert.Equal("Alice", state.Players[0].Name); // Första spelarens namn skall vara Alice
+    Assert.Equal("Alice", state.Players[0].UserName); // Första spelarens namn skall vara Alice
   }
 
   [Fact]
@@ -63,7 +63,7 @@ public class GameCreationTests
     Assert.NotNull(joinedPlayerId); // Bob ska ha fått ett eget spelar-ID (inte null = tomt)
     Assert.NotNull(state); // Spelets info ska inte vara tomt
     Assert.Equal(2, state.Players.Count); // Nu ska det finnas två spelare i spelet
-    Assert.Contains(state.Players, p => p.PlayerId == joinedPlayerId && p.Name == "Bob"); // En kontroll om Bob verkligen finns med i spelarlistan "hitta en spelare där både ID:t matchar Bobs ID och namnet är Bob
+    Assert.Contains(state.Players, p => p.PlayerId == joinedPlayerId && p.UserName == "Bob"); // En kontroll om Bob verkligen finns med i spelarlistan "hitta en spelare där både ID:t matchar Bobs ID och namnet är Bob
   }
   [Fact]
   public void StartGame_StartsRoundAndSetsLetter() // Detta test kontrollerar att spelet startar korrekt efter att en andra spelare gått med
@@ -131,7 +131,7 @@ public class GameCreationTests
       }
     );
 
-    var (found, error, roundFinished) = service.SubmitAnswers(gameId, request); // Alice svar skickas in och får tillbaka found, error och om rundan är avslutad
+    var (found, error, roundFinished) = service.SubmitAnswers(gameId, request, new CategoryService()); // Alice svar skickas in och får tillbaka found, error och om rundan är avslutad
     var (_, state) = service.GetGameState(gameId); // Hämtar spelets nuvarande information för att se vad som sparats
 
     Assert.Null(createError); // Skapandet ska lyckas
