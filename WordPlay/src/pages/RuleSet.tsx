@@ -121,18 +121,13 @@ export default function RuleSet() {
 
           try {
             const result = await hostGame({
-              hostName: host.username,
-              rounds,
-              categories,
+              hostName: host.username
             });
 
             await setGameSettings(result.gameId, categories, rounds, language);
 
           localStorage.setItem("gameId", result.gameId);
           localStorage.setItem("playerId", result.playerId);
-          localStorage.setItem("rounds", rounds.toString());
-          localStorage.setItem("categories", JSON.stringify(categories));
-          localStorage.setItem("language", language);
 
           navigate(`/lobby/${result.gameId}`);
         } catch (err) {
