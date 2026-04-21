@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import { useState } from "react";
+import { hostGame } from "../services/CreateGame";
 
 import "../index.css";
 
