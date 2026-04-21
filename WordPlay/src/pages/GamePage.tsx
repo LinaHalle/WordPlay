@@ -34,7 +34,8 @@ export default function GamePage() {
 
   const [answers, setAnswers] = useState<{ [key: string]: string; }>({});
   const [hasSubmitted, setHasSubmitted] = useState(false);
-  
+  const [secondsLeft, setSecondsLeft] = useState(5);
+
 
   // FETCH GAME (polling)
   useEffect(() => {
@@ -84,10 +85,31 @@ export default function GamePage() {
     }));
   };
 
-  // auto-submit when another player submits first
+  // auto-submit when another player submits first (after 5 second countdown)
   useEffect(() => {
     if (game?.status === "WaitingForAnswers" && !hasSubmitted) {
-      submitAnswers();
+      setSecondsLeft(5);
+
+      const timer = setInterval(() => {
+        setSecondsLeft(prev => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            // Auto-submit after timeout
+            submitAnswers();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [game?.status, hasSubmitted]);
+
+  // auto-finish round when all answers submitted
+  useEffect(() => {
+    if (game?.status === "RoundFinished" && game.hostId === playerId) {
+      finishRound();
     }
   }, [game?.status]);
 
@@ -120,6 +142,12 @@ export default function GamePage() {
   setCountdown(3);
   };
 
+  const finishRound = async () => {
+    await fetch(`/games/${gameId}/finish-round`, {
+      method: "POST"
+    });
+  };
+
   const restartGame = async () => {
     await fetch(`/games/${gameId}/start?playerId=${playerId}`, {
       method: "POST"
@@ -144,7 +172,9 @@ export default function GamePage() {
           {!showLetter ? (
             countdown === 3 ? "READY" :
             countdown === 2 ? "SET" :
-            "GO!" 
+            "GO!"
+          ) : game.status === "WaitingForAnswers" && !hasSubmitted ? (
+              `HURRY! ${secondsLeft}s left`
           ) : (
               `LETTER: ${letter}`
           )}
@@ -159,7 +189,7 @@ export default function GamePage() {
                 <label>{cat}</label>
                 <input
                   className="game-input"
-                  disabled={hasSubmitted}
+                  disabled={hasSubmitted || game.status === "WaitingForAnswers"}
                   value={answers[cat] || ""}
                   onChange={(e) => handleChange(cat, e.target.value)}
                 />
@@ -174,6 +204,19 @@ export default function GamePage() {
             >
               DONE
             </Button>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (game.status === "RoundFinished") {
+    return (
+      <div className="startpage">
+        <h1 className="title">Calculating Scores...</h1>
+        <div className="lobby-wrapper">
+          <Card className="lobby-card">
+            <p>Please wait while we calculate the results.</p>
           </Card>
         </div>
       </div>
