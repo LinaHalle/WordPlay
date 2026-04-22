@@ -31,11 +31,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"hostName\": \"StateHost\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
 						"url": {
-							"raw": "{{base_url}}/games?hostName=StateHost",
+							"raw": "{{base_url}}/games",
 							"host": ["{{base_url}}"],
-							"path": ["games"],
-							"query": [{"key": "hostName", "value": "StateHost"}]
+							"path": ["games"]
 						}
 					},
 					"response": []

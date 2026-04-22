@@ -33,11 +33,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"hostName\": \"Host1\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
 						"url": {
-							"raw": "{{base_url}}/games?hostName=Host1",
+							"raw": "{{base_url}}/games",
 							"host": ["{{base_url}}"],
-							"path": ["games"],
-							"query": [{"key": "hostName", "value": "Host1"}]
+							"path": ["games"]
 						}
 					},
 					"response": []

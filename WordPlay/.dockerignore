@@ -1,0 +1,33 @@
+# dependencies
+node_modules
+**/node_modules
+
+# build outputs
+dist
+bin
+obj
+
+# tests
+tests
+playwright-report
+test-results
+
+# git
+.git
+.gitignore
+
+# env files
+.env
+.env.*.local
+.env.production
+
+# logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode
+.idea

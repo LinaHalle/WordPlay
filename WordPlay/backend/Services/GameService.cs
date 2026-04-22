@@ -12,7 +12,7 @@ public class GameService
     private static string? ValidatePlayerName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            return "Playername is requiered";
+            return "Playername is required";
         if (name.Length > 20)
             return "Name must be 20 characters or less";
         if (!ValidName.IsMatch(name))
@@ -56,6 +56,7 @@ public class GameService
         state.Categories = req.Categories;
         state.Rounds = req.Rounds;
         state.RoundsLeft = req.Rounds;
+        state.Language = req.Language;
         return (true, null);
 
     }
@@ -93,7 +94,7 @@ public class GameService
         return (true, state.CurrentLetter, null);
     }
 
-    public (bool found, string? error, bool roundFinished) SubmitAnswers(Guid gameId, SubmitAnswersRequest req)
+    public (bool found, string? error, bool roundFinished) SubmitAnswers(Guid gameId, SubmitAnswersRequest req, CategoryService categoryService)
     {
         if (!_games.TryGetValue(gameId, out var state))
             return (false, "Not found", false);
@@ -106,25 +107,38 @@ public class GameService
         var extraCategories = req.Answers.Keys.Except(state.Categories).ToList();
         if (extraCategories.Any())
             return (true, "Answers contain invalid categories", false);
+        // Fill missing categories with empty strings (auto-submit may send partial answers)
+        foreach (var cat in state.Categories)
+        {
+            if (!req.Answers.ContainsKey(cat))
+                req.Answers[cat] = "";
+        }
         state.Answers[req.PlayerId] = req.Answers;
-        state.Status = GameStatus.WaitingForAnswers;
-        if (state.Answers.Count == state.Players.Count)
+
+        // First player to submit triggers WaitingForAnswers state
+        if (state.Status == GameStatus.InRound)
+            state.Status = GameStatus.WaitingForAnswers;
+
+        // Check if all players have submitted
+        bool allSubmitted = state.Players.Count == state.Answers.Count;
+        if (allSubmitted)
             state.Status = GameStatus.RoundFinished;
-        return (true, null, state.Status == GameStatus.RoundFinished);
+
+        return (true, null, allSubmitted);
     }
 
-    public (bool found, RoundResult? result, string? error) FinishRound(Guid gameId)
+    public (bool found, RoundResult? roundResult, string? error) FinishRound(Guid gameId, CategoryService categoryService)
     {
         if (!_games.TryGetValue(gameId, out var state))
             return (false, null, null);
         if (state.Status != GameStatus.RoundFinished)
             return (true, null, "Round not finished yet");
-        var roundResult = Scoring.Calculate(state);
+        var roundResult = Scoring.Calculate(state, categoryService);
         state.Scoreboard = roundResult.Scoreboard;
         state.DecrementRoundsLeft();
         if (state.GetRoundsLeft() > 0)
             state.Status = GameStatus.ShowingLeaderboard;
-        if (state.GetRoundsLeft() == 0)
+        else
             state.Status = GameStatus.GameEnded;
         return (true, roundResult, null);
     }
