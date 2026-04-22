@@ -469,19 +469,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\lukas\\.nuget\\packages\\": {}
+    "C:\\Users\\ebadi\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\lukas\\projects\\school_repos\\WordPlay\\WordPlay\\backend\\backend.csproj",
+      "projectUniqueName": "C:\\Users\\ebadi\\repos\\Test, integration och leverans\\WordPlay\\WordPlay\\backend\\backend.csproj",
       "projectName": "backend",
-      "projectPath": "C:\\Users\\lukas\\projects\\school_repos\\WordPlay\\WordPlay\\backend\\backend.csproj",
-      "packagesPath": "C:\\Users\\lukas\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\lukas\\projects\\school_repos\\WordPlay\\WordPlay\\backend\\obj\\",
+      "projectPath": "C:\\Users\\ebadi\\repos\\Test, integration och leverans\\WordPlay\\WordPlay\\backend\\backend.csproj",
+      "packagesPath": "C:\\Users\\ebadi\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\ebadi\\repos\\Test, integration och leverans\\WordPlay\\WordPlay\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\lukas\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\ebadi\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"

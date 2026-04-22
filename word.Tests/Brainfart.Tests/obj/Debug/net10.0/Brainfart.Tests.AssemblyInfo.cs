@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Brainfart.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d0bc6b127a3373a4f725885e36757c88389f6970")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b156ef6cbbd219eaeb625d88183886717054502b")]
 [assembly: System.Reflection.AssemblyProductAttribute("Brainfart.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Brainfart.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
