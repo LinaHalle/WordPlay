@@ -16,6 +16,11 @@ public static class Scoring
         scores[player.PlayerId] = 0;
     }
 
+    // Se till att alla spelare finns i scoreboard från start med 0 poäng
+    // så att även spelare utan korrekta svar syns i resultatet
+    foreach (var player in state.Players)
+      scores.TryAdd(player.PlayerId, 0);
+
     foreach (var category in state.Categories)
     {
       var answers = state.Answers.ToDictionary(
