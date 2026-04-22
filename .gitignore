@@ -1,0 +1,27 @@
+# Node / Frontend
+node_modules
+dist
+dist-ssr
+*.local
+
+claude.md
+
+# .NET
+bin/
+obj/
+
+# User-specific files
+*.user
+*.rsuser
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Editor / OS
+.DS_Store
+
+# Claude Code
+.claude/

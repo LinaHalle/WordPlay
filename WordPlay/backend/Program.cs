@@ -3,41 +3,31 @@ using Brainfart.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var gameService = new GameService();
+var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
-builder.Services.ConfigureHttpJsonOptions(options =>
-{
-  options.SerializerOptions.PropertyNamingPolicy =
-      System.Text.Json.JsonNamingPolicy.CamelCase;
-});
-
-//CORS (frontend access)
 builder.Services.AddCors(options =>
 {
-  options.AddPolicy("AllowFrontend", policy =>
-  {
-    policy
-          .AllowAnyOrigin()
-          .AllowAnyHeader()
-          .AllowAnyMethod();
-  });
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+builder.Services.AddSingleton<GameService>();
+builder.Services.AddSingleton<CategoryService>();
 
 var app = builder.Build();
+
+app.UseStaticFiles();
+app.UseDefaultFiles();
+
 app.UseCors("AllowFrontend");
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-  app.MapOpenApi();
-}
+app.MapGameEndpoints(app.Services.GetRequiredService<GameService>(), app.Services.GetRequiredService<CategoryService>());
 
-app.UseHttpsRedirection();
-
-app.MapGameEndpoints(gameService);
+app.MapFallbackToFile("index.html");
 
 app.Run();
-

@@ -15,10 +15,10 @@ export default function LobbyPage() {
     hostId: string;
     rounds: number;
     categories: string[];
-    players: { playerId: string; userName: string }[];
+    players: { playerId: string; userName: string; }[];
   }>(null);
 
-  
+
   const playerId = localStorage.getItem("playerId");
 
   const isJoined =
@@ -29,52 +29,42 @@ export default function LobbyPage() {
   const isHost = playerId === game?.hostId;
 
   // FETCH GAME
-useEffect(() => {
-  if (!gameId) return;
+  useEffect(() => {
+    if (!gameId) return;
 
-  let isActive = true;
+    let isActive = true;
 
-  const fetchGame = async () => {
-    try {
-      console.log("FETCHING GAME:", gameId);
+    const fetchGame = async () => {
+      try {
+        console.log("FETCHING GAME:", gameId);
 
-      const res = await fetch(`http://localhost:5095/games/${gameId}`);
-      const data = await res.json();
+        const res = await fetch(`/games/${gameId}`);
+        if (!res.ok) throw new Error("Game not found");
+        const data = await res.json();
 
-      console.log("BACKEND DATA:", {
-        gameId: data.gameId,
-        players: data.players.length,
-        hostId: data.hostId,
-        status: data.status
-      });
+        if (!isActive) return;
 
-      if (!isActive) return;
+        setGame(data);
 
-      setGame(data);
-
-       if (
-        data.status === 1 &&
-        window.location.pathname !== `/game/${data.gameId}`
-      ) {
-        navigate(`/game/${data.gameId}`);
+        if (data.status === "InRound") {
+          navigate(`/game/${data.gameId}`);
+        }
+      } catch (err) {
+        console.error("FETCH ERROR:", err);
       }
+    };
 
-    } catch (err) {
-      console.error("FETCH ERROR:", err);
-    }
-  };
+    // direkt första fetch
+    fetchGame();
 
-  // direkt första fetch
-  fetchGame();
+    // polling
+    const interval = setInterval(fetchGame, 2000);
 
-  // polling
-  const interval = setInterval(fetchGame, 2000);
-
-  return () => {
-    isActive = false;
-    clearInterval(interval);
-  };
-}, [gameId]);
+    return () => {
+      isActive = false;
+      clearInterval(interval);
+    };
+  }, [gameId]);
 
   // LOADING STATE
   if (!game) {
@@ -102,7 +92,7 @@ useEffect(() => {
           disabled={!username}
           onClick={async () => {
             const res = await fetch(
-              `http://localhost:5095/games/${game.gameId}/join`,
+              `/games/${game.gameId}/join`,
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -111,18 +101,18 @@ useEffect(() => {
             );
 
 
-            
+
             const data = await res.json();
 
-          localStorage.setItem("playerId", data.playerId);
-          
+            localStorage.setItem("playerId", data.playerId);
 
-          // hämta uppdaterad game state direkt
-          const refreshed = await fetch(`http://localhost:5095/games/${game.gameId}`);
-          const updated = await refreshed.json();
 
-          setGame(updated);
-          setUsername("");
+            // hämta uppdaterad game state direkt
+            const refreshed = await fetch(`/games/${game.gameId}`);
+            const updated = await refreshed.json();
+
+            setGame(updated);
+            setUsername("");
           }}
         >
           Join Game
@@ -195,7 +185,7 @@ useEffect(() => {
             <Button
               onClick={async () => {
                 const res = await fetch(
-                  `http://localhost:5095/games/${game.gameId}/start`,
+                  `/games/${game.gameId}/start?playerId=${playerId}`,
                   { method: "POST" }
                 );
 

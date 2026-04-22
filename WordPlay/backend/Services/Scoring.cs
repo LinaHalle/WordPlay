@@ -4,7 +4,7 @@ namespace Brainfart.Services;
 
 public static class Scoring
 {
-  public static RoundResult Calculate(GameState state)
+  public static RoundResult Calculate(GameState state, CategoryService categoryService)
   {
     var scores = state.Scoreboard != null
      ? new Dictionary<Guid, int>(state.Scoreboard)
@@ -16,10 +16,23 @@ public static class Scoring
         scores[player.PlayerId] = 0;
     }
 
+    // Se till att alla spelare finns i scoreboard från start med 0 poäng
+    // så att även spelare utan korrekta svar syns i resultatet
+    foreach (var player in state.Players)
+      scores.TryAdd(player.PlayerId, 0);
+
     foreach (var category in state.Categories)
     {
-      var answers = state.Answers
-          .ToDictionary(x => x.Key, x => x.Value.GetValueOrDefault(category, ""));
+      var answers = state.Answers.ToDictionary(
+        x => x.Key,
+         x =>
+         {
+           var svar = x.Value.GetValueOrDefault(category, "");
+           return svar.StartsWith(state.CurrentLetter, StringComparison.OrdinalIgnoreCase)
+               && categoryService.IsValidAnswer(state.Language, category, svar)
+               ? svar : "";
+         });
+
 
       var grouped = answers
           .GroupBy(x => x.Value.Trim().ToLower())

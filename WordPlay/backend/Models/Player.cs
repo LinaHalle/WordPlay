@@ -1,3 +1,8 @@
 namespace Brainfart.Models;
 
-public record Player(Guid PlayerId, string UserName);
+public record Player
+(
+  Guid PlayerId,
+  string UserName,
+  bool Host = false
+);

@@ -1,0 +1,845 @@
+{
+	"info": {
+		"_postman_id": "edgecases-api-tests",
+		"name": "EdgeCases API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Edge Case Tests",
+			"item": [
+				{
+					"name": "Setup: Create Lobby",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"if (pm.response.code === 201) {",
+									"    const data = pm.response.json();",
+									"    pm.environment.set(\"gameId\", data.gameId);",
+									"    pm.environment.set(\"hostPlayerId\", data.playerId);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"hostName\": \"EdgeHost\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games",
+							"host": ["{{base_url}}"],
+							"path": ["games"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setup: Join Player 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Player 2 joined, status 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const data = pm.response.json();",
+									"    pm.environment.set(\"player2Id\", data.playerId);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"EdgePlayer2\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/join",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "join"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setup: Set Settings",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Settings accepted, status 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Categories\": [\"Animals\", \"Cities\", \"Names\"],\n    \"Rounds\": 3\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/settings",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "settings"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setup: Start Game",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Game started, status 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const data = pm.response.json();",
+									"    pm.environment.set(\"currentLetter\", data.letter);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/start?playerId={{hostPlayerId}}",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "start"],
+							"query": [{"key": "playerId", "value": "{{hostPlayerId}}"}]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test 01: Very long hostname (1000 chars)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error mentions name length\", function () {",
+									"    const body = pm.response.text();",
+									"    pm.expect(body).to.include(\"20 characters or less\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"hostName\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games",
+							"host": ["{{base_url}}"],
+							"path": ["games"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test 02: Very long player name (1000 chars)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest({",
+									"    url: pm.environment.get('base_url') + '/games',",
+									"    method: 'POST',",
+									"    header: { 'Content-Type': 'application/json' },",
+									"    body: { mode: 'raw', raw: JSON.stringify({ hostName: 'NameTestHost' }) }",
+									"}, function (err, res) {",
+									"    const data = res.json();",
+									"    pm.environment.set('nameTestGameId', data.gameId);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error mentions name length\", function () {",
+									"    const body = pm.response.text();",
+									"    pm.expect(body).to.include(\"20 characters or less\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{nameTestGameId}}/join",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{nameTestGameId}}", "join"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test 03: XSS in hostname",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error mentions invalid characters\", function () {",
+									"    const body = pm.response.text();",
+									"    pm.expect(body).to.include(\"letters, numbers, and spaces\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"hostName\": \"<script>\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games",
+							"host": ["{{base_url}}"],
+							"path": ["games"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test 04: SQL injection in player name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error mentions invalid characters\", function () {",
+									"    const body = pm.response.text();",
+									"    pm.expect(body).to.include(\"letters, numbers, and spaces\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"'; DROP TABLE--\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{nameTestGameId}}/join",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{nameTestGameId}}", "join"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test 05: Emoji in hostname",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error mentions invalid characters\", function () {",
+									"    const body = pm.response.text();",
+									"    pm.expect(body).to.include(\"letters, numbers, and spaces\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"hostName\": \"Player\uD83C\uDFAE\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games",
+							"host": ["{{base_url}}"],
+							"path": ["games"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test 06: Unicode in player name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error mentions invalid characters\", function () {",
+									"    const body = pm.response.text();",
+									"    pm.expect(body).to.include(\"letters, numbers, and spaces\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Sp\u00e9l\u00e0r\u00ea\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{nameTestGameId}}/join",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{nameTestGameId}}", "join"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test 07: Partial answers (subset of categories)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Partial answers accepted\", function () {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.roundFinished).to.be.false;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{hostPlayerId}}\",\n    \"answers\": {\n        \"Animals\": \"Ant\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test 08: Extra categories in answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error mentions invalid categories\", function () {",
+									"    const body = pm.response.text();",
+									"    pm.expect(body).to.include(\"invalid categories\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{player2Id}}\",\n    \"answers\": {\n        \"Animals\": \"Ant\",\n        \"Cities\": \"Austin\",\n        \"Names\": \"Alice\",\n        \"FakeCategory\": \"Foo\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test 09: Unknown playerId in answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error mentions player not found\", function () {",
+									"    const body = pm.response.text();",
+									"    pm.expect(body).to.include(\"Player not found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"00000000-0000-0000-0000-000000000099\",\n    \"answers\": {\n        \"Animals\": \"Ant\",\n        \"Cities\": \"Austin\",\n        \"Names\": \"Alice\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setup: Player 2 valid answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Player 2 answers accepted\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Round finished after all players submitted\", function() {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.roundFinished).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"{{player2Id}}\",\n    \"answers\": {\n        \"Animals\": \"Ape\",\n        \"Cities\": \"Atlanta\",\n        \"Names\": \"Adam\"\n    }\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test 10: Empty JSON body on settings",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Create a fresh lobby for this test",
+									"pm.sendRequest({",
+									"    url: pm.environment.get('base_url') + '/games',",
+									"    method: 'POST',",
+									"    header: { 'Content-Type': 'application/json' },",
+									"    body: { mode: 'raw', raw: JSON.stringify({ hostName: 'SettingsHost' }) }",
+									"}, function (err, res) {",
+									"    const data = res.json();",
+									"    pm.environment.set('tempGameId', data.gameId);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error mentions categories required\", function () {",
+									"    const body = pm.response.text();",
+									"    pm.expect(body).to.include(\"Categories are requiered\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{tempGameId}}/settings",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{tempGameId}}", "settings"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test 11: Empty JSON body on answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 or 500\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 500]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test 12: Finish round twice (double finish)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// First finish should succeed",
+									"pm.sendRequest({",
+									"    url: pm.environment.get('base_url') + '/games/' + pm.environment.get('gameId') + '/finish-round',",
+									"    method: 'POST'",
+									"}, function (err, res) {",
+									"    pm.test('First finish-round succeeds (200)', function() {",
+									"        pm.expect(res.code).to.equal(200);",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 on second finish\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error says round not finished yet\", function () {",
+									"    const body = pm.response.text();",
+									"    pm.expect(body).to.include(\"Round not finished yet\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/finish-round",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "finish-round"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test 13: Start game without settings",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Create a fresh lobby with 2 players but no settings",
+									"pm.sendRequest({",
+									"    url: pm.environment.get('base_url') + '/games',",
+									"    method: 'POST',",
+									"    header: { 'Content-Type': 'application/json' },",
+									"    body: { mode: 'raw', raw: JSON.stringify({ hostName: 'NoSettingsHost' }) }",
+									"}, function (err, res) {",
+									"    const data = res.json();",
+									"    pm.environment.set('noSettingsGameId', data.gameId);",
+									"    pm.environment.set('noSettingsHostId', data.playerId);",
+									"",
+									"    // Join a second player",
+									"    pm.sendRequest({",
+									"        url: pm.environment.get('base_url') + '/games/' + data.gameId + '/join',",
+									"        method: 'POST',",
+									"        header: { 'Content-Type': 'application/json' },",
+									"        body: { mode: 'raw', raw: JSON.stringify({ name: 'Player2' }) }",
+									"    }, function (err2, res2) {",
+									"        // Ready to test start without settings",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error mentions categories must be set\", function () {",
+									"    const body = pm.response.text();",
+									"    pm.expect(body).to.include(\"Categories must be set before starting\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{noSettingsGameId}}/start?playerId={{noSettingsHostId}}",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{noSettingsGameId}}", "start"],
+							"query": [{"key": "playerId", "value": "{{noSettingsHostId}}"}]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test 14: Settings after game started",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error says game already started\", function () {",
+									"    const body = pm.response.text();",
+									"    pm.expect(body).to.include(\"Game already started\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Categories\": [\"Animals\", \"Cities\"],\n    \"Rounds\": 2\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/settings",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "settings"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test 15: Rounds as string instead of number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Categories\": [\"Animals\"],\n    \"Rounds\": \"three\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/{{tempGameId}}/settings",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{tempGameId}}", "settings"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test 16: Non-GUID gameId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 (route constraint rejects non-GUID)\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Categories\": [\"Animals\"],\n    \"Rounds\": 1\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{base_url}}/games/not-a-guid/settings",
+							"host": ["{{base_url}}"],
+							"path": ["games", "not-a-guid", "settings"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test 17: Missing body on answers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 or 415\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 415]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/games/{{gameId}}/answers",
+							"host": ["{{base_url}}"],
+							"path": ["games", "{{gameId}}", "answers"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

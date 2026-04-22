@@ -1,12 +1,3 @@
-// export type Host ={
-//     hostName: string;
-//     categories: string[];
-// };
-
-
-export type CreateGameRequest = {
+export type Host = {
   hostName: string;
-  categories: string[];
-  rounds: number;
-  
 };
