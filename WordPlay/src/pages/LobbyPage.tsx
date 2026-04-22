@@ -3,10 +3,12 @@ import "../index.css";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function LobbyPage() {
   const { gameId } = useParams();
   const [username, setUsername] = useState("");
+  const navigate = useNavigate();
 
   const [game, setGame] = useState<null | {
     gameId: string;
@@ -36,19 +38,17 @@ export default function LobbyPage() {
       try {
         console.log("FETCHING GAME:", gameId);
 
-        const res = await fetch(`http://localhost:5095/games/${gameId}`);
+        const res = await fetch(`/games/${gameId}`);
+        if (!res.ok) throw new Error("Game not found");
         const data = await res.json();
-
-        console.log("BACKEND DATA:", {
-          gameId: data.gameId,
-          players: data.players.length,
-          hostId: data.hostId,
-          status: data.status
-        });
 
         if (!isActive) return;
 
         setGame(data);
+
+        if (data.status === "InRound") {
+          navigate(`/game/${data.gameId}`);
+        }
       } catch (err) {
         console.error("FETCH ERROR:", err);
       }
@@ -92,7 +92,7 @@ export default function LobbyPage() {
           disabled={!username}
           onClick={async () => {
             const res = await fetch(
-              `http://localhost:5095/games/${game.gameId}/join`,
+              `/games/${game.gameId}/join`,
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -108,7 +108,7 @@ export default function LobbyPage() {
 
 
             // hämta uppdaterad game state direkt
-            const refreshed = await fetch(`http://localhost:5095/games/${game.gameId}`);
+            const refreshed = await fetch(`/games/${game.gameId}`);
             const updated = await refreshed.json();
 
             setGame(updated);
@@ -164,7 +164,7 @@ export default function LobbyPage() {
               const link = `${window.location.origin}/lobby/${game.gameId}`;
               navigator.clipboard.writeText(link);
             }}
-          >
+            >
             Copy invite link
           </Button>
 
@@ -185,7 +185,7 @@ export default function LobbyPage() {
             <Button
               onClick={async () => {
                 const res = await fetch(
-                  `http://localhost:5095/games/${game.gameId}/start`,
+                  `/games/${game.gameId}/start?playerId=${playerId}`,
                   { method: "POST" }
                 );
 
@@ -203,7 +203,7 @@ export default function LobbyPage() {
 }
 
 LobbyPage.route = {
-  path: "/lobby",
+  path: '/lobby/:gameId',
   menuLabel: "LobbyPage",
   index: 3
 };

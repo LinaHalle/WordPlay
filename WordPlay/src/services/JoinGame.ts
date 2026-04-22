@@ -1,8 +1,10 @@
 import type { Guest } from "../InterFace/JoinGame";
 
+const API_URL = "https://brainfart.onrender.com";
+
 export async function joinGame(gameID: string, playerName: string) {
         
-    const response = await fetch(`/games/${gameID}/join`, {
+    const response = await fetch(`${API_URL}/games/${gameID}/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify({ playerName }),
