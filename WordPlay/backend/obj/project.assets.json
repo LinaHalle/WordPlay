@@ -469,19 +469,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ebadi\\.nuget\\packages\\": {}
+    "C:\\Users\\halle\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ebadi\\repos\\Test, integration och leverans\\WordPlay\\WordPlay\\backend\\backend.csproj",
+      "projectUniqueName": "C:\\Users\\halle\\testing\\wordplay\\wordplay\\backend\\backend.csproj",
       "projectName": "backend",
-      "projectPath": "C:\\Users\\ebadi\\repos\\Test, integration och leverans\\WordPlay\\WordPlay\\backend\\backend.csproj",
-      "packagesPath": "C:\\Users\\ebadi\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ebadi\\repos\\Test, integration och leverans\\WordPlay\\WordPlay\\backend\\obj\\",
+      "projectPath": "C:\\Users\\halle\\testing\\wordplay\\wordplay\\backend\\backend.csproj",
+      "packagesPath": "C:\\Users\\halle\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\halle\\testing\\wordplay\\wordplay\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\ebadi\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\halle\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -538,7 +538,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.420/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.413/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
