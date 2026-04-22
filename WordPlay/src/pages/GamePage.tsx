@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Card from "../components/Card";
 import Button from "../components/Button";
+import AnswersList from "../components/AnswersList";
 import "../index.css";
 
 type Player = {
@@ -18,6 +19,7 @@ type Game = {
   players: Player[];
   currentLetter: string;
   scoreboard: Record<string, number>;
+  answers: Record<string, Record<string, string>>;
   status: string;
 };
 
@@ -245,6 +247,12 @@ export default function GamePage() {
                 );
               })}
           </ul>
+
+          <AnswersList
+            answers={game.answers}
+            players={game.players}
+            categories={game.categories}
+          />
 
           {isHost && (
             <Button className="next-round-btn"
