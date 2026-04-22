@@ -1,186 +1,176 @@
 import { test, expect } from "@playwright/test";
 
-test('game loads correctly', async ({ page }) => {
-  await page.route('**/games/123', route =>
-    route.fulfill({
-      status: 200,
-      body: JSON.stringify({
-        gameId: "123",
-        hostId: "1",
-        rounds: 3,
-        categories: ["Animal"],
-        players: [],
-        currentLetter: "A",
-        scoreboard: {},
-        status: 1
-      })
-    })
-  );
+import { Page, Route } from "@playwright/test";
 
-  await page.goto('http://localhost:5173/game/123');
-
-  await expect(page.locator('h1')).toBeVisible();
+/**
+ * Helper: mock game response
+ */
+const mockGame = (overrides = {}) => ({
+  gameId: "123",
+  hostId: "1",
+  rounds: 3,
+  categories: ["Animal"],
+  players: [],
+  currentLetter: "A",
+  scoreboard: {},
+  status: "InRound",
+  ...overrides
 });
 
-test('renders categories', async ({ page }) => {
-  await page.route('**/games/123', route =>
+
+/** Helper: mock /games/123 */
+async function setupGameMock(page: Page, gameData: unknown) {
+  await page.route("**/games/123", (route: Route) =>
     route.fulfill({
       status: 200,
-      body: JSON.stringify({
-        gameId: "123",
-        hostId: "1",
-        rounds: 3,
-        categories: ["Animal", "City"],
-        players: [],
-        currentLetter: "A",
-        scoreboard: {},
-        status: 1
-      })
+      contentType: "application/json",
+      body: JSON.stringify(gameData)
     })
   );
+}
 
-  await page.goto('http://localhost:5173/game/123');
+/**
+ * Helper: skip countdown
+ */
+async function skipCountdown(page: Page) {
+  await page.waitForTimeout(3500);
+}
 
-  await expect(page.locator('label')).toHaveCount(2);
+test("game loads correctly", async ({ page }) => {
+  await setupGameMock(page, mockGame());
+
+  await page.goto("http://localhost:5173/game/123");
+
+  await expect(
+    page.getByRole("heading", { name: "Fill in answers" })
+  ).toBeVisible();
 });
 
-test('user can fill answers', async ({ page }) => {
-  await page.route('**/games/123', route =>
-    route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        gameId: "123",
-        hostId: "1",
-        rounds: 3,
-        categories: ["Animal"],
-        players: [],
-        currentLetter: "A",
-        scoreboard: {},
-        status: 1
-      })
-    })
+test("renders categories", async ({ page }) => {
+  await setupGameMock(page,
+    mockGame({ categories: ["Animal", "City"] })
   );
 
-  await page.goto('http://localhost:5173/game/123');
+  await page.goto("http://localhost:5173/game/123");
+  await skipCountdown(page);
 
-  await expect(page.locator('input').first()).toBeVisible();
-
-  await page.locator('input').first().fill('Cat');
-
-  await expect(page.locator('input').first()).toHaveValue('Cat');
+  await expect(page.locator("label")).toHaveCount(2);
 });
 
-test('submits answers', async ({ page }) => {
-  await page.route('**/games/123', route =>
-    route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        gameId: "123",
-        hostId: "1",
-        rounds: 3,
-        categories: ["Animal"],
-        players: [],
-        currentLetter: "A",
-        scoreboard: {},
-        status: 1
-      })
-    })
-  );
+test("user can fill answers", async ({ page }) => {
+  await setupGameMock(page, mockGame());
+
+  await page.goto("http://localhost:5173/game/123");
+  await skipCountdown(page);
+
+  const input = page.locator("input").first();
+
+  await expect(input).toBeVisible();
+
+  await input.fill("Ant");
+
+  await expect(input).toHaveValue("Ant");
+});
+
+test("submits answers", async ({ page }) => {
+  await setupGameMock(page, mockGame());
 
   let called = false;
 
-  await page.route('**/answers', route => {
+  await page.route("**/games/123/answers", route => {
     called = true;
     route.fulfill({ status: 200 });
   });
 
-  await page.goto('http://localhost:5173/game/123');
+  await page.goto("http://localhost:5173/game/123");
+  await skipCountdown(page);
 
-  await page.click('text=DONE');
+  await page.fill("input", "Ant"); // must match letter A
+
+  const button = page.getByRole("button", { name: "DONE" });
+
+  await expect(button).toBeEnabled();
+  await button.click();
 
   expect(called).toBeTruthy();
 });
 
-test('scoreboard is sorted correctly', async ({ page }) => {
-  await page.route('**/games/123', route =>
-    route.fulfill({
-      status: 200,
-      body: JSON.stringify({
-        gameId: "123",
-        hostId: "1",
-        rounds: 3,
-        categories: [],
-        players: [
-          { playerId: "1", userName: "Anna" },
-          { playerId: "2", userName: "Bob" }
-        ],
-        currentLetter: "A",
-        scoreboard: {
-          "1": 10,
-          "2": 20
-        },
-        status: 2
-      })
+test("scoreboard is sorted correctly", async ({ page }) => {
+  await setupGameMock(page,
+    mockGame({
+      status: "ShowingLeaderboard",
+      players: [
+        { playerId: "1", userName: "Anna" },
+        { playerId: "2", userName: "Bob" }
+      ],
+      scoreboard: {
+        "1": 10,
+        "2": 20
+      }
     })
   );
 
-  await page.goto('http://localhost:5173/game/123');
+  await page.goto("http://localhost:5173/game/123");
 
-  const rows = page.locator('.score-row');
+  const rows = page.locator(".score-row");
 
-  await expect(rows.first()).toContainText('Bob');
+  await expect(rows.first()).toContainText("Bob");
 });
 
-test('shows winner', async ({ page }) => {
-  await page.route('**/games/123', route =>
-    route.fulfill({
-      status: 200,
-      body: JSON.stringify({
-        gameId: "123",
-        hostId: "1",
-        rounds: 3,
-        categories: [],
-        players: [
-          { playerId: "1", userName: "Anna" },
-          { playerId: "2", userName: "Bob" }
-        ],
-        currentLetter: "A",
-        scoreboard: {
-          "1": 50,
-          "2": 20
-        },
-        status: 3
-      })
+test("shows winner", async ({ page }) => {
+  await setupGameMock(page,
+    mockGame({
+      status: "GameEnded",
+      players: [
+        { playerId: "1", userName: "Anna" },
+        { playerId: "2", userName: "Bob" }
+      ],
+      scoreboard: {
+        "1": 50,
+        "2": 20
+      }
     })
   );
 
-  await page.goto('http://localhost:5173/game/123');
+  await page.goto("http://localhost:5173/game/123");
 
-  await expect(page.locator('.winner-text')).toContainText('Anna');
+  await expect(page.locator(".winner-text")).toContainText("Anna");
 });
 
-
-test('only host sees next round button', async ({ page }) => {
+test("only host sees next round button", async ({ page }) => {
   await page.addInitScript(() => {
-    localStorage.setItem('playerId', '1');
+    localStorage.setItem("playerId", "1");
   });
 
-  await page.route('**/games/123', route =>
-    route.fulfill({
-      status: 200,
-      body: JSON.stringify({
-        hostId: "1",
-        players: [],
-        categories: [],
-        scoreboard: {},
-        status: 2
-      })
+  await setupGameMock(page,
+    mockGame({
+      status: "ShowingLeaderboard",
+      hostId: "1"
     })
   );
 
-  await page.goto('http://localhost:5173/game/123');
+  await page.goto("http://localhost:5173/game/123");
 
-  await expect(page.locator('text=Next Round')).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Next Round" })
+  ).toBeVisible();
+});
+
+test("non-host does NOT see next round button", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("playerId", "2");
+  });
+
+  await setupGameMock(page,
+    mockGame({
+      status: "ShowingLeaderboard",
+      hostId: "1"
+    })
+  );
+
+  await page.goto("http://localhost:5173/game/123");
+
+  await expect(
+    page.getByRole("button", { name: "Next Round" })
+  ).toHaveCount(0);
 });
