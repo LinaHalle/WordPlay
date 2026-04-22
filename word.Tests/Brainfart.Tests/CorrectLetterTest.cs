@@ -39,8 +39,17 @@ public class CreateGameTest
       }
     };
 
+    var categoryService = new CategoryService(new Dictionary<string, Dictionary<string, HashSet<string>>>
+    {
+      ["en"] = new Dictionary<string, HashSet<string>>
+      {
+        ["Cities"] = new(StringComparer.OrdinalIgnoreCase) { "Alabama" },
+        ["Fruit"] = new(StringComparer.OrdinalIgnoreCase) { "Apple" }
+      }
+    });
+
     //act
-    var result = Scoring.Calculate(state);
+    var result = Scoring.Calculate(state, categoryService);
 
     Assert.Equal(40, result.Scoreboard[player1Id]);
     Assert.Equal(0, result.Scoreboard[player2Id]);

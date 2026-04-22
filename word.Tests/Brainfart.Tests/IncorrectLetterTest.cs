@@ -39,7 +39,9 @@ public class IncorrectLetterTest
       }
     };
 
-    var result = Scoring.Calculate(state);
+    var categoryService = new CategoryService(new Dictionary<string, Dictionary<string, HashSet<string>>>());
+
+    var result = Scoring.Calculate(state, categoryService);
 
     Assert.Equal(0, result.Scoreboard[player1Id]);
     Assert.Equal(0, result.Scoreboard[player2Id]);
