@@ -219,7 +219,7 @@ export default function GamePage() {
      const isHost = game.hostId === playerId;
 
   return (
-    <div className="startpage">
+    <div className="gamepage">
       <h1 className="title">SCOREBOARD</h1>
 
       <div className="lobby-wrapper">
